@@ -18,7 +18,7 @@ Including another URLconf
 
 # artoon2d_blog/urls.py
 from django.urls import path
-from .. import views
+from artoon2d_blog import views
 
 urlpatterns = [
     path('', views.home, name='home'),
