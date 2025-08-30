@@ -1,5 +1,5 @@
 # Python
-*.pyc
+*.py[cod] # refactored to include compiled Python files, optimized bytecode files and Windows dynamic modules
 __pycache__/
 
 # Django
@@ -7,8 +7,10 @@ db.sqlite3
 *.log
 .env
 
+
 # Virtualenv
 artoon2d_env/
+venv/
 
 # IDEs
 .vscode/
