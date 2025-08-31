@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'artoon2d_blog'
+    'artoon2d_blog',
+    'taggit',
 ]
 
 MIDDLEWARE = [
