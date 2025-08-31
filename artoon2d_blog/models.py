@@ -11,9 +11,17 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     featured_image = models.ImageField(upload_to='post_images/', blank=True, null=True)
-    category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, blank=True) 
+    theme = models.CharField (max_length=100, blank=True, null=True)
+    # on delete= SET_NULL to avoid deleting posts if a category is deleted
+    category = models.ForeignKey('artoon2d_blog.Category', on_delete=models.SET_NULL, null=True, blank=True) 
     tags = TaggableManager() # Add tagging functionality 
     def __str__(self):
 	    return self.title + ' | ' + str(self.author)
 
     
+''' Model to rapresent a category for blog posts '''
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
