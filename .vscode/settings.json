@@ -1,0 +1,6 @@
+{
+  "editor.dropIntoEditor.preferences": [],
+  "python.analysis.extraPaths": [
+    "./venv/Lib/site-packages"
+  ]
+}
