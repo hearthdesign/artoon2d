@@ -9,7 +9,7 @@ class PostListView(ListView):
     # Specify the model this view will operate on
     model = Post
     # Define the template to render the list of posts
-    template_name = 'blog/post_list.html'
+    template_name = 'artoon2d_blog/post_list.html'
     # In the template, use {{ posts }} to access the list
     context_object_name = 'posts'
 
