@@ -70,6 +70,10 @@ TEMPLATES = [
     },
 ]
 
+# Media files (uploaded by users)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 WSGI_APPLICATION = 'artoon2d.wsgi.application'
 
 

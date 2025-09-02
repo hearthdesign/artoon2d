@@ -5,7 +5,7 @@
 </head>
 <body>
     <header>
-        # Navigation bar
+        {# Navigation bar #}
         <nav>
             <ul>
                 <li><a href="{% url 'home' %}">Artoon2d Blog</a></li>
@@ -13,7 +13,7 @@
             </ul>
         </nav>
     </header>
-    # Sidebar with recent posts
+    {# Sidebar with recent posts #}
     <aside>
         <h3>Recent Posts</h3>
         <ul>
@@ -24,7 +24,7 @@
     </aside>
 
     <main>
-        # Breadcrumbs block
+        {# Breadcrumbs block #}
         {% block breadcrumbs %}{% endblock %}
         {% block content %}{% endblock %}
     </main>

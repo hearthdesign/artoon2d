@@ -1,17 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'artoon2d_blog/base.html' %}
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
     <article>
         <h2>{{ post.title }}</h2>
-        # show author and created date
+        {# Show author and created date #}
         <p><strong>By:</strong> {{ post.author }} | <strong>Published:</strong> {{ post.created_at|date:"F j, Y" }}</p>
         <p><em>{{ post.created_at|timesince }} ago</em></p>
-        # show updated date only if different from created date
+        {# Show updated date only if different from created date #}
         {% if post.updated_at > post.created_at %}
             <p><em>Updated on {{ post.updated_at|date:"F j, Y" }}</em></p>
         {% endif %}
-        # show category and theme if exists
+        {# Show category and theme if exists #}
         {% if post.category %}
             <p><strong>Category:</strong> {{ post.category.name }}</p>
         {% endif %}
@@ -19,7 +19,7 @@
         {% if post.theme %}
             <p><strong>Theme:</strong> {{ post.theme }}</p>
         {% endif %}
-        # show content with linebreaks
+        {# Show content with linebreaks #}
         <div>
             {{ post.content|linebreaks }}
         </div>
@@ -29,7 +29,7 @@
                 <img src="{{ post.featured_image.url }}" alt="Featured image" style="max-width:100%;">
             </div>
         {% endif %}
-        # show tags if exists
+        {# Show tags if exists #}
         {% if post.tags.all %}
             <p><strong>Tags:</strong>
                 {% for tag in post.tags.all %}
@@ -37,7 +37,7 @@
                 {% endfor %}
             </p>
         {% endif %}
-        #link to go back to post list
+        {# Link to go back to post list #}
         <p><a href="{% url 'post_list' %}">← Back to all posts</a></p>
     </article>
 {% endblock %}
