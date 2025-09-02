@@ -18,4 +18,4 @@ class PostDetailView(DetailView):
     # Specify the model this view will operate on
     model = Post
     # Define the template to render the detailed view of a single post
-    template_name = 'blog/post_detail.html'
+    template_name = 'artoon2d_blog/post_detail.html'
