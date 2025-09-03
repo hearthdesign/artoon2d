@@ -18,6 +18,8 @@ from .views import (
     PostDeleteView,
 )
 
+from .views import RegisterView
+
 # Define URL patterns for the blog app
 urlpatterns = [
     path('', views.home, name='home'),
@@ -32,4 +34,5 @@ urlpatterns = [
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),  # View post
     path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post_update'),  # Edit post
     path('posts/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),  # Delete post
+    path('accounts/register/', RegisterView.as_view(), name='register'),
 ]

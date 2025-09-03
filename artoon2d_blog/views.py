@@ -7,7 +7,9 @@ from django.shortcuts import render
 from django.db.models import Q
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
+
 
 '''View to display a list of blog posts with search and sorting functionality'''
 class PostListView(ListView):
@@ -97,3 +99,9 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     
 def home(request):
     return render(request, 'artoon2d_blog/home.html')
+
+# View to handle user registration
+class RegisterView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'registration/register.html'
+    success_url = reverse_lazy('login')  
