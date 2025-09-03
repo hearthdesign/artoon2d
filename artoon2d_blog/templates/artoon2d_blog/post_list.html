@@ -15,7 +15,7 @@
 
     {% for post in page_obj %}
         <article>
-            # Display post title with link to detail view
+            {# Display post title with link to detail view #}
             <h2><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
             <p>Published on {{ post.created_at|date:"F j, Y" }}</p>
             <p><em>{{ post.created_at|timesince }} ago</em></p>

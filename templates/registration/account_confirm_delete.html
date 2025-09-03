@@ -1,0 +1,13 @@
+{% extends "artoon2d_blog/base.html" %}
+
+{% block content %}
+  <div class="register-container">
+    <h2>Delete Your Account</h2>
+    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="submit-button">Yes, delete my account</button>
+      <a href="{% url 'home' %}" class="nav-button">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

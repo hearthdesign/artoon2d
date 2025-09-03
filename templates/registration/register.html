@@ -1,10 +1,12 @@
 {% extends "artoon2d_blog/base.html" %}
 
 {% block content %}
-  <h2>Create an Account</h2>
-  <form method="post">
+<div class="register-container">
+  <h2 class="registration_title">Create Your Account</h2>
+  <form method="post" class="register-form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Register</button>
+    <button type="submit" class="submit-button">Register</button>
   </form>
+</div>
 {% endblock %}

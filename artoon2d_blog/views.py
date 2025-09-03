@@ -7,7 +7,9 @@ from django.shortcuts import render
 from django.db.models import Q
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 
 
@@ -104,4 +106,12 @@ def home(request):
 class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'registration/register.html'
-    success_url = reverse_lazy('login')  
+    success_url = reverse_lazy('login')
+
+class AccountDeleteView(LoginRequiredMixin, DeleteView):
+    model = User  # Use the User model
+    template_name = 'registration/account_confirm_delete.html'
+    success_url = reverse_lazy('home')  # Redirect after deletion
+
+    def get_object(self):
+        return self.request.user  # Only allow users to delete themselves
