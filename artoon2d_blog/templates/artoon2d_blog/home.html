@@ -1,20 +1,32 @@
 {% extends 'artoon2d_blog/base.html' %}
-
+{% load static %}
 {% block title %}Welcome to ARTOON2D Blog{% endblock %}
 
 {% block content %}
-    <h1>Hello</h1>
-    <a href="{% url 'post_list' %}">View Blog Posts</a>
-{% endblock %}
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ARTOON2D</title>
-</head>
-<body>
+<div class="hero">
     <h1>Hello!</h1>
     <a href="{% url 'post_list' %}">View Blog Posts</a>
-</body>
-</html>
+</div>
+<div class="featured-posts">
+    <h2>Featured Posts</h2>
+    <ul>
+        {% for post in featured_posts %}
+            <li>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.summary }}</p>
+                <a href="{% url 'post_detail' post.pk %}">Read More</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="carousel">
+  <div class="carousel-track">
+    <img src="{% static 'artoon2d_blog/assets/images/img1.jpg' %}" class="carousel-slide" alt="Slide 1">
+    <img src="{% static 'artoon2d_blog/assets/images/img2.jpg' %}" class="carousel-slide" alt="Slide 2">
+    <img src="{% static 'artoon2d_blog/assets/images/img3.jpg' %}" class="carousel-slide" alt="Slide 3">
+  </div>
+  <button class="carousel-btn prev">‹</button>
+  <button class="carousel-btn next">›</button>
+  <script src="{% static 'artoon2d_blog/assets/js/scripts.js' %}"></script>
+</div>
+{% endblock %}

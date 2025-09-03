@@ -9,12 +9,10 @@ from django.conf import settings
 
 
 urlpatterns = [
-    # Admin site
-    path('admin/', admin.site.urls),
-    # include the blog app' s URLs
-    path('', include('artoon2d_blog.urls')),
-    # Direct access to the postlist view
-    path('posts/', PostListView.as_view(), name='post_list'),
+    path('admin/', admin.site.urls),  # Admin site
+    path('accounts/', include('django.contrib.auth.urls')),  # Autentication URLs
+    path('', include('artoon2d_blog.urls')),  # include the blog app' s URLs
+    path('posts/', PostListView.as_view(), name='post_list'),  # Direct access to the postlist view
 ]
 
 # Serve media files during development

@@ -2,14 +2,23 @@
 <html lang="en">
 <head>
     <title>{% block title %}Artoon2d Blog{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Default blog description{% endblock %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'artoon2d_blog/css/style.css' %}">
 </head>
 <body>
     <header>
         {# Navigation bar #}
-        <nav>
+        <nav class="navbar">
             <ul>
-                <li><a href="{% url 'home' %}">Artoon2d Blog</a></li>
-                <li><a href="{% url 'post_list' %}">Posts</a></li>
+              <li><a href="{% url 'home' %}" class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d Blog</a></li>
+              <li><a href="{% url 'post_list' %}" class="nav-button {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">Posts</a></li>
+              {% if user.is_authenticated %}
+                <li><a href="{% url 'post_create' %}" class="nav-button">New Post</a></li>
+                <li><a href="{% url 'logout' %}" class="nav-button">Logout</a></li>
+              {% else %}
+                <li><a href="{% url 'login' %}" class="nav-button">Login</a></li>
+              {% endif %}
             </ul>
         </nav>
     </header>
@@ -32,5 +41,7 @@
     <footer>
         <p>&copy; 2025 Artoon2d Blog</p>
     </footer>
+    {% load static %}
+    <script src="{% static 'artoon2d_blog/assets/js/scripts.js' %}"></script>
 </body>
 </html>
