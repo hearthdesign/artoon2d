@@ -192,3 +192,24 @@ footer {
     font-size: 16px;
   }
 }
+
+.carousel-btn {
+  text-align: center;
+  font-weight: bold;
+  top: 50%;
+  margin: 2rem;
+  background-color: rgba(0, 76, 105, 0.5);
+  color: white;
+  border: none;
+  border-radius: 1.2rem ;
+  height: 3rem;
+  width: 3rem;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 1;
+}
+
+.carousel-btn:hover {
+  background-color: #9ff84c;
+}
