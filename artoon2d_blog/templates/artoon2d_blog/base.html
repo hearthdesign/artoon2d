@@ -9,21 +9,22 @@
 <body>
     <header>
         {# Navigation bar #}
+    <header>
         <nav class="navbar">
             <ul>
-              <li><a href="{% url 'home' %}" class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d Blog</a></li>
-              <li><a href="{% url 'post_list' %}" class="nav-button {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">Posts</a></li>
-              {% if user.is_authenticated %}
-                <li><a href="{% url 'post_create' %}" class="nav-button">New Post</a></li>
-                <li><a href="{% url 'logout' %}" class="nav-button">Logout</a></li>
-              {% else %}
-                <li><a href="{% url 'login' %}" class="nav-button">Login</a></li>
-              {% endif %}
+                <li><form action="{% url 'home' %}" method="get"><button class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d Blog</button></form></li>
+                <li><form action="{% url 'post_list' %}" method="get"><button class="nav-button {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">Posts</button></form></li>
+                {% if user.is_authenticated %}
+                <li><form action="{% url 'post_create' %}" method="get"><button class="nav-button">New Post</button></form></li>
+                <li><form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="nav-button">Logout</button></form></li>
+                {% else %}
+                <li><form action="{% url 'login' %}" method="get"><button class="nav-button">Login</button></form></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
     {# Sidebar with recent posts #}
-    <aside>
+    <aside class="sidebar_recent">
         <h3>Recent Posts</h3>
         <ul>
             {% for recent_post in recent_posts %}
