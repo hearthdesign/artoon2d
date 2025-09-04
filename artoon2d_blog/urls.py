@@ -8,6 +8,8 @@ from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView,
 
 # Import static to serve media files
 from django.conf.urls.static import static
+# Import like and follow views
+from .views import like_post, follow_user
 
 from .views import (
     home,
@@ -36,4 +38,6 @@ urlpatterns = [
     path('posts/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),  # Delete post
     path('accounts/register/', RegisterView.as_view(), name='register'),  # Register
     path('accounts/delete/', AccountDeleteView.as_view(), name='account_delete'),  # Delete account
+    path('like/<int:post_id>/', like_post, name='like_post'),
+    path('follow/<int:user_id>/', follow_user, name='follow_user'),
 ]

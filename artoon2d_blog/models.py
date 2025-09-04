@@ -24,3 +24,29 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+''' Model to rapresent a user profile with following and liked posts functionality '''
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    # toggle like method to like or unlike a post
+    def toggle_like(self, user):
+        if user in self.likes.all():
+            self.likes.remove(user)
+            return 'unliked'
+        else:
+            self.likes.add(user)
+            return 'liked'
+''' Model to rapresent a user profile with following functionality '''
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    following = models.ManyToManyField(User, related_name='followers', blank=True)
+    # toggle follow method to follow or unfollow a user
+    def toggle_follow(self, target_user):
+        if target_user in self.following.all():
+            self.following.remove(target_user)
+            return 'unfollowed'
+        else:
+            self.following.add(target_user)
+            return 'followed'
