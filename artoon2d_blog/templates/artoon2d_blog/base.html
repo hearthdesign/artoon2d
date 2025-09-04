@@ -67,27 +67,30 @@
     </div>
     </main>
     <footer>
-        <p>&copy; 2025 Artoon2d Blog</p> 
-        <div class="social_btn_s"><button class="mastodon-share-btn"
-            data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
-            onclick="MastodonShare(event)">
-        <i class="fa-brands fa-mastodon"></i>
-</button>
-<button class="pixelfeld-share-btn"
-        data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
-        onclick="PixelfeldShare(event)">
-  <i class="fa-solid fa-share-nodes"></i>
-</button>
-<button class="friendica-share-btn"
-        data-title="{{ post.title }}"
-        data-url="{{ request.build_absolute_uri }}"
-        onclick="FriendicaShare(event)">
-  <i class="fa-solid fa-share-from-square"></i>
-</button>
-<div>
+        <div class="informations">
+            <p><a href="mailto:1.space.channel.1@gmail.com">Contact</a>
+            <a href="{% url 'about' %}">About</a></p>
+            <p>&copy; 2025 Artoon2d Blog</p>
+        </div>
+        <div class="social_btn_s">
+            <button class="mastodon-share-btn"
+                data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
+                onclick="MastodonShare(event)">
+                <i class="fa-brands fa-mastodon"></i>
+            </button>
+            <button class="pixelfeld-share-btn"
+                data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
+                onclick="PixelfeldShare(event)">
+                <i class="fa-solid fa-share-nodes"></i>
+            </button>
+            <button class="friendica-share-btn"
+                data-title="{{ post.title }}"
+                data-url="{{ request.build_absolute_uri }}"
+                onclick="FriendicaShare(event)">
+                <i class="fa-solid fa-share-from-square"></i>
+            </button>
     </footer>
     {% load static %}
     <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
-</div>
 </body>
 </html>

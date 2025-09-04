@@ -133,3 +133,6 @@ def follow_user(request, user_id):
     action = profile.toggle_follow(target_user)
     # Optional: Add messages or logging here
     return redirect('user_profile', user_id=target_user.id)
+
+def about_view(request):
+    return render(request, 'artoon2d_blog/about.html')

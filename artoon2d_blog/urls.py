@@ -40,4 +40,5 @@ urlpatterns = [
     path('accounts/delete/', AccountDeleteView.as_view(), name='account_delete'),  # Delete account
     path('like/<int:post_id>/', like_post, name='like_post'),
     path('follow/<int:user_id>/', follow_user, name='follow_user'),
+    path('about/', views.about_view, name='about')
 ]
