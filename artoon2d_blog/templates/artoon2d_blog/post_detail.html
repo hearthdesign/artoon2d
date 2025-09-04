@@ -26,9 +26,13 @@
 
         {% if post.featured_image %}
             <div>
-                <img src="{{ post.featured_image.url }}" alt="Featured image" style="max-width:100%;">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;">
             </div>
         {% endif %}
+        {% if user == post.author %}
+            <a href="{% url 'post_update' post.pk %}">Edit Post</a>
+        {% endif %}
+
         {# Show tags if exists #}
         {% if post.tags.all %}
             <p><strong>Tags:</strong>

@@ -101,6 +101,10 @@ main {
 }
 
 footer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
   background-color: #054549;
   color: #dcc8f3;
   text-align: center;
@@ -238,3 +242,55 @@ footer {
   object-fit: cover;
 }
 
+.social_btn_s {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.mastodon-share-btn {
+  background-color: #5e10ac;
+  color: white;
+  border: 1px solid rgb(255, 255, 255);
+  padding: 1rem;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mastodon-share-btn:hover {
+  background-color: #492bce;
+}
+
+.pixelfeld-share-btn {
+  background-color: #c8fe02;
+  color: rgb(37, 0, 63);
+  border: 1px solid rgb(207, 206, 255);
+  padding: 1rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pixelfeld-share-btn:hover {
+  background-color: #fe6a5d;
+}
+
+.friendica-share-btn {
+  background-color: #003f63;
+  color: rgb(255, 216, 43);
+  border: 1px solid rgb(255, 216, 43);
+  padding: 1rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.friendica-share-btn:hover {
+  background-color: #0180e0;
+}

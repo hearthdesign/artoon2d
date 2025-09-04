@@ -31,9 +31,9 @@ urlpatterns = [
 
     # URL pattern for creating a new post
     path('post/new/', PostCreateView.as_view(), name='post_create'),  # List of posts
-    path('posts/new/', PostCreateView.as_view(), name='post_create'),  # Create post
+    path('posts/new/', PostCreateView.as_view(), name='post_create_alt'),  # Create post
     # URL patterns for updating an existing post identified by the primary key  
-    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),  # View post
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),  # View post
     path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post_update'),  # Edit post
     path('posts/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),  # Delete post
     path('accounts/register/', RegisterView.as_view(), name='register'),  # Register
