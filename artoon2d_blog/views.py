@@ -9,6 +9,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 # Import mixins for authentication and authorization
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+''' Import to create a new blog post '''
+from django.views.generic.edit import CreateView
 
 ## Import user creation form for user registration
 from django.contrib.auth.forms import UserCreationForm
@@ -17,7 +19,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
-
 
 '''View to display a list of blog posts with search and sorting functionality'''
 class PostListView(ListView):
@@ -66,14 +67,10 @@ class PostDetailView(DetailView):
     template_name = 'artoon2d_blog/post_detail.html'
     context_object_name = 'post'
 
-''' Import to create a new blog post '''
-from django.views.generic.edit import CreateView
-from .models import Post
-
 ''' View to create a new blog post '''
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content', 'author', 'image' 'category', 'tags', 'theme',]
+    fields = ['title', 'content', 'author', 'image', 'category', 'tags', 'theme']
     template_name = 'artoon2d_blog/post_form.html' # Template for the form
     success_url = reverse_lazy('post_list') # Redirect to Home after seccessful creation
     # Automatically set the author to the logged-in user
@@ -132,7 +129,7 @@ def like_post(request, post_id):
 @login_required(login_url='register')
 def follow_user(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
-    profile = request.user.profile
+    profile, _ = Profile.objects.get_or_create(user=request.user)
     action = profile.toggle_follow(target_user)
     # Optional: Add messages or logging here
     return redirect('user_profile', user_id=target_user.id)
