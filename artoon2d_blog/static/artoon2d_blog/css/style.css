@@ -200,9 +200,7 @@ footer {
   display: inline-block;
   line-height: 0.5rem;
   font-weight: bold;
-  top: 50%;
   margin: 2rem;
-  /* background-color: rgba(0, 76, 105, 0.5); */
   background: linear-gradient( 0deg, rgba(0, 76, 105, 0.9) 25%, #69f7eb 100%);
   color: white;
   border: none;
@@ -220,3 +218,23 @@ footer {
   /* background-color: #9ff84c; */
   background: linear-gradient( 0deg, #3d7e00 0%, #d7f7ff 100%);
 }
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
