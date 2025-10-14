@@ -41,7 +41,7 @@
                 <li><form action="{% url 'post_create' %}" method="get"><button class="nav-button">New Post</button></form></li>
                 <li><form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="nav-button">Logout</button></form></li>
                 {% else %}
-                <li><form action="{% url 'login' %}" method="get"><button class="nav-button">Login</button></form></li>
+                <li><form action="{% url 'login' %}" method="get"><button class="nav-button {% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</button></form></li>
                 <li><form action="{% url 'register' %}" method="get">
                     <button class="nav-button {% if request.resolver_match.url_name == 'register' %}active{% endif %}">Register</button>
                 </form></li>
