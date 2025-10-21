@@ -11,6 +11,7 @@
         {% if post.updated_at > post.created_at %}
             <p><em>Updated on {{ post.updated_at|date:"F j, Y" }}</em></p>
         {% endif %}
+
         {# Show category and theme if exists #}
         {% if post.category %}
             <p><strong>Category:</strong> {{ post.category.name }}</p>
@@ -26,7 +27,7 @@
 
         {% if post.image %}
             <div>
-                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%;">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; border-radius: 0.7rem;">
             </div>
         {% endif %}
         {% if user == post.author %}
