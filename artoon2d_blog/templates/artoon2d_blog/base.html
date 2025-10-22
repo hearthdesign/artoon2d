@@ -19,7 +19,7 @@
     <!-- Title block for dynamic page titles -->
     <title>{% block title %}Artoon2d Blog{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Default blog description{% endblock %}">
-    {% load static %}
+    {% comment %} {% load static %} {% endcomment %}
      <!-- Stylesheets -->
     <link rel="stylesheet" href="{% static 'artoon2d_blog/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -51,14 +51,7 @@
     </header>
     
     {# Sidebar with recent posts #}
-    <aside class="sidebar_recent">
-        <h3>Recent Posts</h3>
-        <ul>
-            {% for recent_post in recent_posts %}
-                <li><a href="{% url 'post_detail' recent_post.pk %}">{{ recent_post.title }}</a></li>
-            {% endfor %}
-        </ul>
-    </aside>
+        {% comment %} {% include 'artoon2d_blog/sidebar.html' %} {% endcomment %}
     <main class="content">
     <div>
         {# Breadcrumbs block #}
@@ -89,8 +82,8 @@
                 onclick="FriendicaShare(event)">
                 <i class="fa-solid fa-share-from-square"></i>
             </button>
+        </div>
     </footer>
-    {% load static %}
     <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
 </body>
 </html>

@@ -3,9 +3,13 @@
 {% block title %}Welcome to ARTOON2D Blog{% endblock %}
 
 {% block content %}
+    <header></header>
+    
+    {# Sidebar with recent posts #}
+        {% include 'artoon2d_blog/sidebar.html' %}
 <div class="hero">
     <h1>Hello!</h1>
-    <a href="{% url 'post_list' %}">View Blog Posts</a>
+    <a href="{% url 'post_list' %}">VIEW BLOG POSTS</a>
 </div>
 <div class="featured-posts">
     <h2>Featured Posts</h2>
@@ -19,14 +23,22 @@
         {% endfor %}
     </ul>
 </div>
+
 <div class="carousel">
-  <div class="carousel-track">
-    <img src="{% static 'artoon2d_blog/images/img1.jpg' %}" class="carousel-slide" alt="Slide 1">
-    <img src="{% static 'artoon2d_blog/images/img2.jpg' %}" class="carousel-slide" alt="Slide 2">
-    <img src="{% static 'artoon2d_blog/images/img3.jpg' %}" class="carousel-slide" alt="Slide 3">
+  <div class="carousel-track" style="  display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 50%;
+    border-radius: 0.7rem;
+    ">
+    {% for post in posts %}
+      {% if post.image %}
+        <img src="{{ post.image.url }}" class="carousel-slide" alt="{{ post.title }}" style= "border-radius:0.7rem; width:30%; margin: 0.7rem;">
+      {% endif %}
+    {% endfor %}
   </div>
   <button class="carousel-btn prev"><</button>
   <button class="carousel-btn next">></button>
   <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
 </div>
+
 {% endblock %}

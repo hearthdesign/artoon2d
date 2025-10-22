@@ -70,7 +70,7 @@ class PostDetailView(DetailView):
 ''' View to create a new blog post '''
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content', 'author', 'image', 'category', 'tags', 'theme']
+    fields = ['title', 'content', 'image', 'category', 'tags', 'theme']
     template_name = 'artoon2d_blog/post_form.html' # Template for the form
     success_url = reverse_lazy('post_list') # Redirect to Home after seccessful creation
     # Automatically set the author to the logged-in user
@@ -100,7 +100,17 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == post.author
 ''' Home view to render the home page '''    
 def home(request):
-    return render(request, 'artoon2d_blog/home.html')
+    # Limit to latest 10 posts with images for the main section
+    posts_with_images = Post.objects.exclude(image='').order_by('-created_at')[:10]
+
+    # Add recent posts for the sidebar (e.g., latest 5 posts)
+    recent_posts = Post.objects.order_by('-created_at')[:5]
+
+    return render(request, 'artoon2d_blog/home.html', {
+        'posts': posts_with_images,
+        'recent_posts': recent_posts
+    })
+
 
 # View to handle user registration
 class RegisterView(CreateView):

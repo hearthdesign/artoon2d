@@ -1,6 +1,8 @@
 {% extends 'artoon2d_blog/base.html' %}
+
 {% block content %}
     {# Search and filter form #}
+    <div class="category-filter">
     <form method="get">
         <input type="text" name="q" placeholder="Search..." value="{{ query }}">
         <select name="category">
@@ -12,17 +14,19 @@
         </select>
         <button type="submit">Filter</button>
     </form>
+</div>
+        {% for post in page_obj %}
+          <div class="post-card">
+            {% if post.image %}
+              <img src="{{ post.image.url }}" alt="{{ post.title }}" class="thumbnail"  style="width: 10rem; height: 10rem; margin-top: 2rem; border-radius: 0.7rem; object-fit:cover;">
+            {% endif %}
+            <h2 style="text-transform: uppercase"><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
 
-    {% for post in page_obj %}
-        <article>
-            {# Display post title with link to detail view #}
-            <h2><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
-            <p>Published on {{ post.created_at|date:"F j, Y" }}</p>
-            <p><em>{{ post.created_at|timesince }} ago</em></p>
-        </article>
-    {% empty %}
-        <p>No posts found.</p>
-    {% endfor %}
+          </div>
+        {% empty %}
+          <p>No posts found.</p>
+        {% endfor %}
+
     {# Pagination controls #}
     <div class="pagination">
         {% if page_obj.has_previous %}
