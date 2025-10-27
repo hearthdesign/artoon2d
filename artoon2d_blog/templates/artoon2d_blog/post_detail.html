@@ -7,9 +7,7 @@
         {# Show author and created date #}
         <p><strong>By:</strong> {{ post.author }} | <strong>Published:</strong> {{ post.created_at|date:"F j, Y" }}</p>
         <p><em>{{ post.created_at|timesince }} ago</em></p>
-        <button >Test Button</button>
-
-        {% include 'artoon2d_blog/components/follow_button.html' with target_user=post.author is_following=post.author.is_following %}
+        {% include 'artoon2d_blog/components/follow_button.html' with target_user=post.author is_following=post.author.is_following follower_count=post.author.follower_count %}
 
         {# Show updated date only if different from created date #}
         {% if post.updated_at > post.created_at %}
