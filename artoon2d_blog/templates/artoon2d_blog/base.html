@@ -32,7 +32,7 @@
         <nav class="navbar">
             <ul>
                 <li><form action="{% url 'home' %}" method="get">
-                    <button class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d Blog</button>
+                    <button class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d</button>
                 </form></li>
                 <li><form action="{% url 'post_list' %}" method="get">
                     <button class="nav-button {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">Posts</button>
@@ -50,8 +50,7 @@
         </nav>
     </header>
     
-    {# Sidebar with recent posts #}
-        {% comment %} {% include 'artoon2d_blog/sidebar.html' %} {% endcomment %}
+    <div class="layout-row">
     <main class="content">
     <div>
         {# Breadcrumbs block #}
@@ -59,9 +58,10 @@
         {% block content %}{% endblock %}
     </div>
     </main>
+</div>
     <footer>
         <div class="informations">
-            <p><a href="mailto:1.space.channel.1@gmail.com">Contact</a>
+            <p id="p-info"><a href="mailto:1.space.channel.1@gmail.com">Contact</a>
             <a href="{% url 'about' %}">About</a></p>
             <p>&copy; 2025 Artoon2d Blog</p>
         </div>
@@ -85,5 +85,7 @@
         </div>
     </footer>
     <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
+    <script src="{% static 'artoon2d_blog/js/follow.js' %}"></script>
+
 </body>
 </html>

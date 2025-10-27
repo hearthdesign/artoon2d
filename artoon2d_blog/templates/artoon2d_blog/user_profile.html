@@ -1,0 +1,68 @@
+{% extends 'artoon2d_blog/base.html' %}
+
+{% block content %}
+<div class="profile-page">
+  <div class="profile-header">
+    {% if profile.avatar %}
+      <img src="{{ profile.avatar.url }}" alt="{{ user_profile.username }}'s avatar" class="avatar">
+    {% else %}
+      <img src="{% static 'default-avatar.png' %}" alt="Default avatar" class="avatar">
+    {% endif %}
+    <h2>{{ user_profile.username }}</h2>
+    <p>{{ profile.bio }}</p>
+    <p><strong>Followers:</strong> {{ follower_count }}</p>
+    <p><strong>Visitors:</strong> {{ visitor_count }}</p>
+
+    {% if request.user != user_profile and request.user.is_authenticated %}
+      <button id="followBtn" data-user-id="{{ user_profile.id }}">
+        {{ "Unfollow" if is_following else "Follow" }}
+      </button>
+    {% endif %}
+  </div>
+
+  <h3>Posts by {{ user_profile.username }}</h3>
+  <ul class="user-posts">
+    {% for post in posts %}
+      <li><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></li>
+    {% empty %}
+      <li>No posts yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<script>
+  const followBtn = document.getElementById("followBtn");
+  if (followBtn) {
+    followBtn.addEventListener("click", function () {
+      const userId = this.dataset.userId;
+      fetch(`/follow/${userId}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+      })
+      .then(response => response.json())
+      .then(data => {
+        this.textContent = data.status === "followed" ? "Unfollow" : "Follow";
+      });
+    });
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}

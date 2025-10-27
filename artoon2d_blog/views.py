@@ -1,10 +1,10 @@
 from datetime import timedelta
 from django.utils.timezone import now
 # Import the Post model from the current app's models.py
-from .models import Post
-from django.shortcuts import render
+from .models import Post, Profile
+
 # import Q for complex queries
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 # Import mixins for authentication and authorization
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -12,11 +12,16 @@ from django.contrib.auth.models import User
 ''' Import to create a new blog post '''
 from django.views.generic.edit import CreateView
 
+from django.http import JsonResponse
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+
 ## Import user creation form for user registration
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+
 # Import get object or 404 and redirect for like and follow views
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 
@@ -59,13 +64,32 @@ class PostListView(ListView):
         context['category'] = self.request.GET.get('category')
         context['recent_days'] = self.request.GET.get('recent_days')
         context['recent_posts'] = Post.objects.order_by('-created_at')[:5]
+        # "is_following" flag for each post's author
+        user = self.request.user
+        if user.is_authenticated:
+            profile, _ = Profile.objects.get_or_create(user=user)
+            for post in context['posts']:
+                author_profile, _ = Profile.objects.get_or_create(user=post.author)
+                post.author.is_following = profile.following.filter(id=post.author.id).exists()
+                post.author.follower_count = author_profile.followers.count()
         return context
 
 ''' View to display the view of a single post'''
 class PostDetailView(DetailView):
     model = Post
     template_name = 'artoon2d_blog/post_detail.html'
-    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = context['post']
+        user = self.request.user
+
+        if user.is_authenticated and user != post.author:
+            profile, _ = Profile.objects.get_or_create(user=user)
+            post.author.is_following = profile.following.filter(id=post.author.id).exists()
+            post.author.follower_count = post.author.profile.followers.count()
+
+        return context
 
 ''' View to create a new blog post '''
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -129,20 +153,54 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
 
 ''' View to like or unlike a post '''
 @login_required(login_url='register')
+
+@require_POST
+
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     action = post.toggle_like(request.user)
-    # Optional: Add messages or logging here
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({"status": action, "likes": post.likes.count()})
     return redirect('post_detail', pk=post_id)
+
+def about_view(request):
+    return render(request, 'artoon2d_blog/about.html')
 
 ''' View to follow or unfollow a user '''
 @login_required(login_url='register')
+@require_POST
 def follow_user(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
     profile, _ = Profile.objects.get_or_create(user=request.user)
     action = profile.toggle_follow(target_user)
-    # Optional: Add messages or logging here
+
+    # If it's an AJAX request, return JSON
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        follower_count = target_user.profile.followers.count()
+        return JsonResponse({"status": action, "follower_count": follower_count})
+
+    # Otherwise, redirect with a message
+    messages.success(request, f"You {'followed' if action == 'followed' else 'unfollowed'} {target_user.username}.")
     return redirect('user_profile', user_id=target_user.id)
 
-def about_view(request):
-    return render(request, 'artoon2d_blog/about.html')
+def user_profile(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+    profile, _ = Profile.objects.get_or_create(user=target_user)
+
+    # Visitor count logic
+    if request.user.is_authenticated and request.user != target_user:
+        profile.visitor_count = profile.visitor_count + 1 if profile.visitor_count else 1
+        profile.save()
+
+    # Posts by this user
+    posts = target_user.post_set.all()
+
+    context = {
+        'user_profile': target_user,
+        'profile': profile,
+        'posts': posts,
+        'is_following': request.user.is_authenticated and profile.followers.filter(id=request.user.id).exists(),
+        'follower_count': profile.followers.count(),
+        'visitor_count': profile.visitor_count or 0,
+    }
+    return render(request, 'artoon2d_blog/user_profile.html', context)

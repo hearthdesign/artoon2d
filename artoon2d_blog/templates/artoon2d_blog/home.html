@@ -3,10 +3,10 @@
 {% block title %}Welcome to ARTOON2D Blog{% endblock %}
 
 {% block content %}
-    <header></header>
+    <div class="sidebar-div">{% include 'artoon2d_blog/sidebar.html' %}</div>
     
     {# Sidebar with recent posts #}
-        {% include 'artoon2d_blog/sidebar.html' %}
+        
 <div class="hero">
     <h1>Hello!</h1>
     <a href="{% url 'post_list' %}">VIEW BLOG POSTS</a>
@@ -25,14 +25,13 @@
 </div>
 
 <div class="carousel">
-  <div class="carousel-track" style="  display: flex;
-    transition: transform 0.5s ease-in-out;
-    width: 50%;
-    border-radius: 0.7rem;
-    ">
+  <div class="carousel-track">
     {% for post in posts %}
       {% if post.image %}
-        <img src="{{ post.image.url }}" class="carousel-slide" alt="{{ post.title }}" style= "border-radius:0.7rem; width:30%; margin: 0.7rem;">
+        <a href="{% url 'post_detail' post.pk %}" style="  display: block;
+  width: 100%; height: 100%;">
+          <img src="{{ post.image.url }}" class="carousel-slide" alt="{{ post.title }}">
+        </a>
       {% endif %}
     {% endfor %}
   </div>
@@ -42,3 +41,4 @@
 </div>
 
 {% endblock %}
+

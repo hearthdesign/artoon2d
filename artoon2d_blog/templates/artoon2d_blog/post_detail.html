@@ -7,6 +7,10 @@
         {# Show author and created date #}
         <p><strong>By:</strong> {{ post.author }} | <strong>Published:</strong> {{ post.created_at|date:"F j, Y" }}</p>
         <p><em>{{ post.created_at|timesince }} ago</em></p>
+        <button >Test Button</button>
+
+        {% include 'artoon2d_blog/components/follow_button.html' with target_user=post.author is_following=post.author.is_following %}
+
         {# Show updated date only if different from created date #}
         {% if post.updated_at > post.created_at %}
             <p><em>Updated on {{ post.updated_at|date:"F j, Y" }}</em></p>
@@ -27,7 +31,7 @@
 
         {% if post.image %}
             <div>
-                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; border-radius: 0.7rem;">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-img">
             </div>
         {% endif %}
         {% if user == post.author %}

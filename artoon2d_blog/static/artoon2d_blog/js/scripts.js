@@ -27,6 +27,23 @@ setInterval(() => {
 }, 5000);
 
 
+  // Show button when user scrolls down
+  window.onscroll = function() {
+    const btn = document.getElementById("scrollTopBtn");
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+      btn.style.display = "block";
+    } else {
+      btn.style.display = "none";
+    }
+  };
+
+  // Scroll to top when clicked
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+
+
 function MastodonShare(event) {
   const button = event.currentTarget;
   // Get the share text from the button's data-src attribute

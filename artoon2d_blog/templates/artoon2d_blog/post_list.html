@@ -18,14 +18,16 @@
         {% for post in page_obj %}
           <div class="post-card">
             {% if post.image %}
-              <img src="{{ post.image.url }}" alt="{{ post.title }}" class="thumbnail"  style="width: 10rem; height: 10rem; margin-top: 2rem; border-radius: 0.7rem; object-fit:cover;">
+              <img src="{{ post.image.url }}" alt="{{ post.title }}" class="thumbnail">
             {% endif %}
-            <h2 style="text-transform: uppercase"><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+            <h2 id="p-list-title"><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
 
           </div>
         {% empty %}
           <p>No posts found.</p>
         {% endfor %}
+
+    <button onclick="scrollToTop()" class="scroll-top-btn" id="scrollTopBtn" title="Go to top">↑</button>
 
     {# Pagination controls #}
     <div class="pagination">
@@ -40,4 +42,8 @@
             <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Next</a>
         {% endif %}
     </div>
+
+
+    
 {% endblock %} 
+

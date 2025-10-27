@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User # Import the User model for the author field
 from taggit.managers import TaggableManager # Import TaggableManager for tagging functionality
 from django.contrib import admin
-
+from django.contrib.auth.models import User
 
 ''' Model to rapresent a blog post'''
 class Post(models.Model):
@@ -41,11 +41,19 @@ class Category(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     following = models.ManyToManyField(User, related_name='followers', blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    bio = models.TextField(blank=True)
+    followers = models.ManyToManyField(User, related_name='following', blank=True)
+    visitor_count = models.PositiveIntegerField(default=0)
+
     # toggle follow method to follow or unfollow a user
     def toggle_follow(self, target_user):
         if target_user in self.following.all():
             self.following.remove(target_user)
+            target_user.profile.followers.remove(self.user)
             return 'unfollowed'
         else:
             self.following.add(target_user)
+            target_user.profile.followers.add(self.user)
             return 'followed'
