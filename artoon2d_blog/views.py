@@ -24,6 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
+from artoon2d_blog.models import Follow
 
 '''View to display a list of blog posts with search and sorting functionality'''
 class PostListView(ListView):
@@ -71,7 +72,7 @@ class PostListView(ListView):
             for post in context['posts']:
                 author_profile, _ = Profile.objects.get_or_create(user=post.author)
                 post.author.is_following = profile.following.filter(id=post.author.id).exists()
-                post.author.follower_count = author_profile.followers.count()
+                post.author.follower_count = Follow.objects.filter(to_profile=author_profile).count()
         return context
 
 ''' View to display the view of a single post'''
@@ -87,7 +88,7 @@ class PostDetailView(DetailView):
         if user.is_authenticated and user != post.author:
             profile, _ = Profile.objects.get_or_create(user=user)
             post.author.is_following = profile.following.filter(id=post.author.id).exists()
-            post.author.follower_count = post.author.profile.followers.count()
+            post.author.follower_count = post.author.profile.new_followers.count()
 
         return context
 
@@ -170,18 +171,27 @@ def about_view(request):
 @login_required(login_url='register')
 @require_POST
 def follow_user(request, user_id):
-    target_user = get_object_or_404(User, id=user_id)
-    profile, _ = Profile.objects.get_or_create(user=request.user)
-    action = profile.toggle_follow(target_user)
+    # Get the target profile based on user ID
+    target_profile = get_object_or_404(Profile, user__id=user_id)
+    user_profile = request.user.profile
 
-    # If it's an AJAX request, return JSON
+    # Toggle follow status
+    action = user_profile.toggle_follow(target_profile)
+
+    # Handle AJAX request
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        follower_count = target_user.profile.followers.count()
-        return JsonResponse({"status": action, "follower_count": follower_count})
+        follower_count = target_profile.follower_relations.count()
+        return JsonResponse({
+            "status": action,
+            "follower_count": follower_count
+        })
 
-    # Otherwise, redirect with a message
-    messages.success(request, f"You {'followed' if action == 'followed' else 'unfollowed'} {target_user.username}.")
-    return redirect('user_profile', user_id=target_user.id)
+    # Handle non-AJAX request with feedback
+    messages.success(
+        request,
+        f"You {action} {target_profile.user.username}."
+    )
+    return redirect('user_profile', user_id=target_profile.user.id)
 
 def user_profile(request, user_id):
     target_user = get_object_or_404(User, id=user_id)

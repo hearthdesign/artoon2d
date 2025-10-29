@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from decouple import config # Import decouple to manage enviroment variables
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'artoon2d_blog',
+    # 'artoon2d_blog',
+    'artoon2d_blog.apps.Artoon2DBlogConfig',
     'taggit',
 ]
 
@@ -69,16 +71,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DATABASE_NAME'),
-        'USER': config('DATABASE_USER'),
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        'HOST': config('DATABASE_HOST', default='localhost'),
-        'PORT': config('DATABASE_PORT', default='5432'),
-    }
+    'default': 
+        dj_database_url.config(default=config('DATABASE_URL'))
 }
-
 
 
 # Password validation

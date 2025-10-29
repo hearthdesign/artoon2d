@@ -2,6 +2,18 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
+    <form method="post" action="{% url 'like_post' post.id %}">
+    {% csrf_token %}
+    <button type="submit">
+      {% if user in post.likes.all %}
+        ❤️ Unlike
+      {% else %}
+        🤍 Like
+      {% endif %}
+    </button>
+    <span>{{ post.likes.count }} likes</span>
+  </form>
+  
     <article>
         <h2>{{ post.title }}</h2>
         {# Show author and created date #}
@@ -22,6 +34,8 @@
         {% if post.theme %}
             <p><strong>Theme:</strong> {{ post.theme }}</p>
         {% endif %}
+
+
         {# Show content with linebreaks #}
         <div>
             {{ post.content|linebreaks }}
