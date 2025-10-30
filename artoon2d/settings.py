@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'artoon2d_blog',
     'artoon2d_blog.apps.Artoon2DBlogConfig',
     'taggit',
 ]
@@ -111,11 +110,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'artoon2d_blog' / 'static',
-]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+S
 
 # Use WhiteNoise to serve static files with compression and caching support
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
