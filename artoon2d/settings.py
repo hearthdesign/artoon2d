@@ -11,10 +11,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#+9$gb3z-_6mnb2hvu6lu_yx0kx=e1(g$-_v1t_b08%^1^v)9u'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
 ALLOWED_HOSTS = ['artoon2d-ad3b8f5dfe58.herokuapp.com', 'localhost', '127.0.0.1']
 
 # Application definition
@@ -103,7 +103,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-# USE_I18N = True
+USE_I18N = True
 
 USE_TZ = True
 
@@ -115,6 +115,9 @@ STATICFILES_DIRS = [
     BASE_DIR / 'artoon2d_blog' / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Use WhiteNoise to serve static files with compression and caching support
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (uploaded by users)
 MEDIA_URL = '/media/'
