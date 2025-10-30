@@ -3,10 +3,9 @@
 {% block title %}Welcome to ARTOON2D Blog{% endblock %}
 
 {% block content %}
+    {# Sidebar with recent posts #}
     <div class="sidebar-div">{% include 'artoon2d_blog/sidebar.html' %}</div>
     
-    {# Sidebar with recent posts #}
-        
 <div class="hero">
     <h1>Hello!</h1>
     <a href="{% url 'post_list' %}">VIEW BLOG POSTS</a>

@@ -31,9 +31,7 @@
         {# Navigation bar #}
         <nav class="navbar">
             <ul>
-                <li><form action="{% url 'home' %}" method="get">
-                    <button class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d</button>
-                </form></li>
+                <li><a href="{% url 'home' %}" class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Artoon2d</a></li>
                 <li><form action="{% url 'post_list' %}" method="get">
                     <button class="nav-button {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">Posts</button>
                 </form></li>
@@ -48,6 +46,7 @@
                 {% endif %}
             </ul>
         </nav>
+        
     </header>
     
     <div class="layout-row">
@@ -59,6 +58,7 @@
     </div>
     </main>
 </div>
+<div class="visitor-count"><p>Total visitors: {{ visitor_count }}</p></div>
     <footer>
         <div class="informations">
             <p id="p-info"><a href="mailto:1.space.channel.1@gmail.com">Contact</a>
@@ -66,22 +66,26 @@
             <p>&copy; 2025 Artoon2d Blog</p>
         </div>
         <div class="social_btn_s">
-            <button class="mastodon-share-btn"
+            <button class="mastodon-share-btn icon-button" aria-label="Follow" 
                 data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
                 onclick="MastodonShare(event)">
                 <i class="fa-brands fa-mastodon"></i>
             </button>
-            <button class="pixelfeld-share-btn"
+            <span class="hover-label">Follow</span>
+            <button class="pixelfeld-share-btn icon-button" aria-label="Follow" 
                 data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
                 onclick="PixelfeldShare(event)">
                 <i class="fa-solid fa-share-nodes"></i>
             </button>
-            <button class="friendica-share-btn"
+            <span class="hover-label">Follow</span>
+            <button class="friendica-share-btn icon-button" aria-label="Follow" 
                 data-title="{{ post.title }}"
                 data-url="{{ request.build_absolute_uri }}"
                 onclick="FriendicaShare(event)">
-                <i class="fa-solid fa-share-from-square"></i>
+                <i class="fa-solid fa-share-from-square" class="fa fa-user-plus"></i>
             </button>
+            <span class="hover-label">Follow</span>
+ 
         </div>
     </footer>
     <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>

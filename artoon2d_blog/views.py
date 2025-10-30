@@ -25,6 +25,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 from artoon2d_blog.models import Follow
+# Visitor Counter
+from .models import VisitorCounter
 
 '''View to display a list of blog posts with search and sorting functionality'''
 class PostListView(ListView):
@@ -123,19 +125,24 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+    
 ''' Home view to render the home page '''    
 def home(request):
+        # Increment total visitor count
+    counter = VisitorCounter.objects.first()
+    if counter:
+        counter.total_visits += 1
+        counter.save()
     # Limit to latest 10 posts with images for the main section
     posts_with_images = Post.objects.exclude(image='').order_by('-created_at')[:10]
-
     # Add recent posts for the sidebar (e.g., latest 5 posts)
     recent_posts = Post.objects.order_by('-created_at')[:5]
 
     return render(request, 'artoon2d_blog/home.html', {
         'posts': posts_with_images,
-        'recent_posts': recent_posts
+        'recent_posts': recent_posts,
+        'visitor_count': counter.total_visits if counter else 0
     })
-
 
 # View to handle user registration
 class RegisterView(CreateView):
@@ -214,3 +221,5 @@ def user_profile(request, user_id):
         'visitor_count': profile.visitor_count or 0,
     }
     return render(request, 'artoon2d_blog/user_profile.html', context)
+
+

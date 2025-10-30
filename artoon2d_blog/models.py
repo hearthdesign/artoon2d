@@ -74,3 +74,9 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.title} | {self.author}"
 
+# Visitor Counter Model
+class VisitorCounter(models.Model):
+    total_visits = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Total visits: {self.total_visits}"
