@@ -21,7 +21,7 @@ h1, h2,h3, h4 {
   font-family: 'Comic Sans MS';
   text-transform: uppercase;
   font-weight: bold;
-  letter-spacing: 0.1%;
+  letter-spacing: 0.01rem;
   word-wrap: break-word;
   white-space: normal;
 }
@@ -531,7 +531,7 @@ footer {
 .scroll-top-btn:hover {
   background-color: #eb51a1;
   transition: background-color 0.3s ease;
-  box-shadow: #eb51a1 0 0.35rem 1rem rgb(255, 170, 242);
+  box-shadow: #eb51a1 0 0.35rem 1rem;
   background: linear-gradient(0deg, #015f7b 5%, #59b9c0 70%, #b4edff 100%);
 }
 
