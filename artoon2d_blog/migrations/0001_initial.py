@@ -19,7 +19,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Category',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, unique=True)),
             ],
             options={
@@ -29,46 +30,59 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Follow',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
             name='Post',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=200)),
                 ('content', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='post_images/')),
+                ('image', models.ImageField(blank=True,
+                 null=True, upload_to='post_images/')),
                 ('theme', models.CharField(blank=True, max_length=100, null=True)),
-                ('author', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, related_name='posts', to=settings.AUTH_USER_MODEL)),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='artoon2d_blog.category')),
-                ('likes', models.ManyToManyField(blank=True, related_name='liked_posts', to=settings.AUTH_USER_MODEL)),
-                ('tags', taggit.managers.TaggableManager(help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
+                ('author', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE,
+                 related_name='posts', to=settings.AUTH_USER_MODEL)),
+                ('category', models.ForeignKey(blank=True, null=True,
+                 on_delete=django.db.models.deletion.SET_NULL, to='artoon2d_blog.category')),
+                ('likes', models.ManyToManyField(blank=True,
+                 related_name='liked_posts', to=settings.AUTH_USER_MODEL)),
+                ('tags', taggit.managers.TaggableManager(help_text='A comma-separated list of tags.',
+                 through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
             ],
         ),
         migrations.CreateModel(
             name='Profile',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to='avatars/')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('avatar', models.ImageField(
+                    blank=True, null=True, upload_to='avatars/')),
                 ('bio', models.TextField(blank=True)),
                 ('visitor_count', models.PositiveIntegerField(default=0)),
-                ('following', models.ManyToManyField(blank=True, related_name='new_followers', through='artoon2d_blog.Follow', to='artoon2d_blog.profile')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('following', models.ManyToManyField(blank=True, related_name='new_followers',
+                 through='artoon2d_blog.Follow', to='artoon2d_blog.profile')),
+                ('user', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
             model_name='follow',
             name='from_profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following_relations', to='artoon2d_blog.profile'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='following_relations', to='artoon2d_blog.profile'),
         ),
         migrations.AddField(
             model_name='follow',
             name='to_profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='follower_relations', to='artoon2d_blog.profile'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='follower_relations', to='artoon2d_blog.profile'),
         ),
         migrations.AlterUniqueTogether(
             name='follow',

@@ -16,7 +16,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 
-## Import user creation form for user registration
+# Import user creation form for user registration
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
@@ -29,12 +29,15 @@ from artoon2d_blog.models import Follow
 from .models import VisitorCounter
 
 '''View to display a list of blog posts with search and sorting functionality'''
+
+
 class PostListView(ListView):
     model = Post
     template_name = 'artoon2d_blog/post_list.html'
     context_object_name = 'posts'
     paginate_by = 5
     # Override get queryset to add search and filtering function
+
     def get_queryset(self):
         query = self.request.GET.get('q')
         category = self.request.GET.get('category')
@@ -61,6 +64,7 @@ class PostListView(ListView):
         # order by most recent posts first
         return qs.order_by('-created_at')
     # Add context data for template rendering
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
@@ -72,12 +76,18 @@ class PostListView(ListView):
         if user.is_authenticated:
             profile, _ = Profile.objects.get_or_create(user=user)
             for post in context['posts']:
-                author_profile, _ = Profile.objects.get_or_create(user=post.author)
-                post.author.is_following = profile.following.filter(id=post.author.id).exists()
-                post.author.follower_count = Follow.objects.filter(to_profile=author_profile).count()
+                author_profile, _ = Profile.objects.get_or_create(
+                    user=post.author)
+                post.author.is_following = profile.following.filter(
+                    id=post.author.id).exists()
+                post.author.follower_count = Follow.objects.filter(
+                    to_profile=author_profile).count()
         return context
 
+
 ''' View to display the view of a single post'''
+
+
 class PostDetailView(DetailView):
     model = Post
     template_name = 'artoon2d_blog/post_detail.html'
@@ -89,52 +99,70 @@ class PostDetailView(DetailView):
 
         if user.is_authenticated and user != post.author:
             profile, _ = Profile.objects.get_or_create(user=user)
-            post.author.is_following = profile.following.filter(id=post.author.id).exists()
+            post.author.is_following = profile.following.filter(
+                id=post.author.id).exists()
             post.author.follower_count = post.author.profile.new_followers.count()
 
         return context
 
+
 ''' View to create a new blog post '''
+
+
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content', 'image', 'category', 'tags', 'theme']
-    template_name = 'artoon2d_blog/post_form.html' # Template for the form
-    success_url = reverse_lazy('post_list') # Redirect to Home after seccessful creation
+    template_name = 'artoon2d_blog/post_form.html'  # Template for the form
+    # Redirect to Home after seccessful creation
+    success_url = reverse_lazy('post_list')
     # Automatically set the author to the logged-in user
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
 ''' View to update an existing blog post'''
+
+
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content', 'image', 'category', 'tags']
     template_name = 'artoon2d_blog/post_form.html'
     success_url = reverse_lazy('post_list')
     # Ensure that only the author can edit the post
+
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
 
+
 ''' View to delete a blog post '''
+
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'artoon2d_blog/post_confirm_delete.html'
     success_url = reverse_lazy('post_list')
     # Ensure only the author can delete the post
+
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
-    
-''' Home view to render the home page '''    
+
+
+''' Home view to render the home page '''
+
+
 def home(request):
-        # Increment total visitor count
+    # Increment total visitor count
     counter = VisitorCounter.objects.first()
     if counter:
         counter.total_visits += 1
         counter.save()
     # Limit to latest 10 posts with images for the main section
-    posts_with_images = Post.objects.exclude(image='').order_by('-created_at')[:10]
+    posts_with_images = Post.objects.exclude(
+        image='').order_by('-created_at')[:10]
     # Add recent posts for the sidebar (e.g., latest 5 posts)
     recent_posts = Post.objects.order_by('-created_at')[:5]
 
@@ -145,25 +173,32 @@ def home(request):
     })
 
 # View to handle user registration
+
+
 class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')
 
+
 ''' View to handle user account deletion'''
+
+
 class AccountDeleteView(LoginRequiredMixin, DeleteView):
     model = User  # Use the User model
     template_name = 'registration/account_confirm_delete.html'
     success_url = reverse_lazy('home')  # Redirect after deletion
     # Ensure only the logged-in user can delete their own account
+
     def get_object(self):
         return self.request.user  # Only allow users to delete themselves
 
+
 ''' View to like or unlike a post '''
+
+
 @login_required(login_url='register')
-
 @require_POST
-
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     action = post.toggle_like(request.user)
@@ -171,10 +206,14 @@ def like_post(request, post_id):
         return JsonResponse({"status": action, "likes": post.likes.count()})
     return redirect('post_detail', pk=post_id)
 
+
 def about_view(request):
     return render(request, 'artoon2d_blog/about.html')
 
+
 ''' View to follow or unfollow a user '''
+
+
 @login_required(login_url='register')
 @require_POST
 def follow_user(request, user_id):
@@ -200,6 +239,7 @@ def follow_user(request, user_id):
     )
     return redirect('user_profile', user_id=target_profile.user.id)
 
+
 def user_profile(request, user_id):
     target_user = get_object_or_404(User, id=user_id)
     profile, _ = Profile.objects.get_or_create(user=target_user)
@@ -221,5 +261,3 @@ def user_profile(request, user_id):
         'visitor_count': profile.visitor_count or 0,
     }
     return render(request, 'artoon2d_blog/user_profile.html', context)
-
-

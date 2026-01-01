@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from decouple import config, Csv # Import decouple to manage enviroment variables
+from decouple import config, Csv  # Import decouple to manage enviroment variables
 import dj_database_url
 
 
@@ -47,7 +47,7 @@ ROOT_URLCONF = 'artoon2d.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], # os path to templates
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # os path to templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,15 +66,13 @@ LOGIN_REDIRECT_URL = '/'  # Where to go after login
 LOGOUT_REDIRECT_URL = '/'  # Where to go after logout
 
 
-
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 DATABASES = {
-    'default': 
+    'default':
         dj_database_url.config(default=config('DATABASE_URL'))
 }
 

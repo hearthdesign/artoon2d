@@ -6,18 +6,18 @@ from artoon2d_blog.views import PostListView
 # Import static to serve media files
 from django.conf.urls.static import static
 # Import settings to serve media files
-from django.conf import settings 
+from django.conf import settings
 
 
 urlpatterns = [
     # Admin site
-    path('admin/', admin.site.urls),  
+    path('admin/', admin.site.urls),
     # Autentication URLs
-    path('accounts/', include('django.contrib.auth.urls')),  
+    path('accounts/', include('django.contrib.auth.urls')),
     # include the blog APP' s URLs
-    path('', include('artoon2d_blog.urls')),  
+    path('', include('artoon2d_blog.urls')),
     # Direct access to the postlist view
-    path('posts/', PostListView.as_view(), name='post_list'),  
+    path('posts/', PostListView.as_view(), name='post_list'),
     # User profile view
     path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
 ]
