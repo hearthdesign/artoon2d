@@ -12,8 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
@@ -29,6 +27,7 @@ INSTALLED_APPS = [
     # 'artoon2d_blog',
     'artoon2d_blog.apps.Artoon2DBlogConfig',
     'taggit',
+    'cloudinary', 'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +116,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Use WhiteNoise to serve static files with compression and caching support
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Cloudinary configuration for media file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = { 
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'), 
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'), 
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'), 
+    }
 
 # Media files (uploaded by users)
 MEDIA_URL = '/media/'

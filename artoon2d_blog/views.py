@@ -226,10 +226,10 @@ def follow_user(request, user_id):
 
     # Handle AJAX request
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        follower_count = target_profile.follower_relations.count()
+        new_follower_count = target_profile.follower_relations.count()
         return JsonResponse({
             "status": action,
-            "follower_count": follower_count
+            "follower_count": new_follower_count
         })
 
     # Handle non-AJAX request with feedback
@@ -256,8 +256,8 @@ def user_profile(request, user_id):
         'user_profile': target_user,
         'profile': profile,
         'posts': posts,
-        'is_following': request.user.is_authenticated and profile.followers.filter(id=request.user.id).exists(),
-        'follower_count': profile.followers.count(),
+        'is_following': request.user.is_authenticated and profile.new_followers.filter(id=request.user.id).exists(),
+        'follower_count': profile.new_followers.count(),
         'visitor_count': profile.visitor_count or 0,
     }
     return render(request, 'artoon2d_blog/user_profile.html', context)
