@@ -8,6 +8,7 @@ from .models import Post
 
 @admin.register(Post) 
 class PostAdmin(admin.ModelAdmin): 
+    fields = ('title', 'content', 'image', 'author', 'theme')
     list_display = ('id', 'title', 'author', 'theme', 'created_at') 
     search_fields = ('title', 'content') 
     list_filter = ('theme', 'author') 

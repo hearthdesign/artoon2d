@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from decouple import config, Csv  # Import decouple to manage enviroment variables
 import dj_database_url
@@ -13,7 +14,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECURITY WARNING: don't run with debug turned on in production!
-
+# Security 
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 # Application definition
@@ -27,7 +30,8 @@ INSTALLED_APPS = [
     # 'artoon2d_blog',
     'artoon2d_blog.apps.Artoon2DBlogConfig',
     'taggit',
-    'cloudinary', 'cloudinary_storage',
+    'cloudinary', 
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -65,11 +69,23 @@ LOGIN_REDIRECT_URL = '/'  # Where to go after login
 LOGOUT_REDIRECT_URL = '/'  # Where to go after logout
 
 
+LOGGING = { 
+    'version': 1, 
+    'disable_existing_loggers': False, 
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout, 
+        }, 
+    }, 
+    'root': { 
+        'handlers': ['console'], 
+        'level': 'ERROR', 
+    }, 
+}
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
-
 DATABASES = {
     'default':
         dj_database_url.config(default=config('DATABASE_URL'))
@@ -96,35 +112,29 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'artoon2d_blog' / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 # Use WhiteNoise to serve static files with compression and caching support
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Cloudinary configuration for media file storage
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-CLOUDINARY_STORAGE = { 
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'), 
-    'API_KEY': config('CLOUDINARY_API_KEY'), 
-    'API_SECRET': config('CLOUDINARY_API_SECRET'), 
-}
+CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+# CLOUDINARY_STORAGE = { 
+#     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'), 
+#     'API_KEY': config('CLOUDINARY_API_KEY'), 
+#     'API_SECRET': config('CLOUDINARY_API_SECRET'), 
+# }
 
 # Media files (uploaded by users)
 MEDIA_URL = '/media/'
@@ -134,8 +144,8 @@ WSGI_APPLICATION = 'artoon2d.wsgi.application'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Security (correct for Heroku)
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
