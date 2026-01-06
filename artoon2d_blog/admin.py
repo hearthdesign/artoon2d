@@ -21,7 +21,7 @@ class PostAdmin(admin.ModelAdmin):
         return ('author',) 
 
     def save_model(self, request, obj, form, change): 
-        # If creating a new post and user is not superuser, set author automatically 
-        if not obj.pk and not request.user.is_superuser: 
+        # If creating a new post set author automatically 
+        if not obj.pk: 
             obj.author = request.user 
         super().save_model(request, obj, form, change)
