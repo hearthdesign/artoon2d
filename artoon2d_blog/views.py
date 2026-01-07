@@ -127,7 +127,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content', 'image', 'category', 'tags']
+    fields = ['title', 'content', 'image', 'category', 'tags', 'theme']
     template_name = 'artoon2d_blog/post_form.html'
     success_url = reverse_lazy('post_list')
     # Ensure that only the author can edit the post
@@ -161,8 +161,10 @@ def home(request):
         counter.total_visits += 1
         counter.save()
     # Limit to latest 10 posts with images for the main section
-    posts_with_images = Post.objects.exclude(
-        image='').order_by('-created_at')[:10]
+    posts_with_images = Post.objects.filter(
+        image__isnull=False).exclude(
+            image='').order_by(
+                '-created_at')[:10]
     # Add recent posts for the sidebar (e.g., latest 5 posts)
     recent_posts = Post.objects.order_by('-created_at')[:5]
 
@@ -219,7 +221,8 @@ def about_view(request):
 def follow_user(request, user_id):
     # Get the target profile based on user ID
     target_profile = get_object_or_404(Profile, user__id=user_id)
-    user_profile = request.user.profile
+    user_profile, _ = Profile.objects.get_or_create(user=request.user)
+
 
     # Toggle follow status
     action = user_profile.toggle_follow(target_profile)
