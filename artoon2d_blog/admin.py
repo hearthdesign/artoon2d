@@ -10,31 +10,36 @@ from .models import Post
 class PostAdmin(admin.ModelAdmin): 
     fieldsets = ( 
         ('Main Content', 
-         { 'fields': ('title', 'content', 'image') 
-          }), 
-          ('Classification', { 
+            { 'fields': ('title', 'content', 'image') 
+        }), 
+        ('Classification', { 
               'fields': ('theme', 'category', 'tags') 
-              }), 
-              ('Metadata', { 
-                  'fields': ('author',) # readonly for staff, editable for superuser
-                  }), 
-                                                                      )
-
+        }), 
+        ('Metadata', { 
+            'fields': ('created_at', 'updated_at','author',) # readonly for staff, editable for superuser
+        }), 
+    )
+    readonly_fields = ('author', 'created_at', 'updated_at')
     list_display = (
         'id', 'title', 'author', 'theme', 'category', 'created_at') 
     search_fields = ('title', 'content') 
     list_filter = ('theme', 'author', 'category') 
 
     
-    def get_readonly_fields(self, request, obj=None): 
-        # Superusers can edit the author 
-        if request.user.is_superuser: 
-            return ()
-        # Staff users cannot edit the author 
-        return ('author',) 
-
     def save_model(self, request, obj, form, change): 
-        # If creating a new post set author automatically 
         if not obj.pk: 
             obj.author = request.user 
         super().save_model(request, obj, form, change)
+
+    # def get_readonly_fields(self, request, obj=None): 
+    #     # Superusers can edit the author 
+    #     if request.user.is_superuser: 
+    #         return ()
+    #     # Staff users cannot edit the author 
+    #     return ('author',) 
+
+    # def save_model(self, request, obj, form, change): 
+    #     # If creating a new post set author automatically 
+    #     if not obj.pk: 
+    #         obj.author = request.user 
+    #     super().save_model(request, obj, form, change)
