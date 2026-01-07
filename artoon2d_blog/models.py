@@ -103,11 +103,6 @@ class Follow(models.Model):
 # -------------------------------------------------
 class Post(models.Model):
     title = models.CharField(max_length=200)
-    slug = models.SlugField(
-        max_length=220,
-        unique=True,
-        blank=True
-    )
     content = models.TextField()
 
     author = models.ForeignKey(
@@ -138,7 +133,12 @@ class Post(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    slug = models.SlugField(
+        max_length=220,
+        unique=True,
+        blank=True, 
+        null=True
+    )
     # -----------------------------
     # Auto generated slug on save
     #------------------------------
