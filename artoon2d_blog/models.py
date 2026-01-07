@@ -103,6 +103,11 @@ class Follow(models.Model):
 # -------------------------------------------------
 class Post(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(
+        max_length=220,
+        unique=True,
+        blank=True
+    )
     content = models.TextField()
 
     author = models.ForeignKey(
@@ -133,42 +138,26 @@ class Post(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(
-        max_length=220,
-        unique=True,
-        blank=True, 
-        null=True
-    )
+
     # -----------------------------
-    # Auto generated slug on save
-    #------------------------------
+    # Auto-generated slug
+    # -----------------------------
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
-            while Post.objects.filter(slug=slug).exists():
+            while Post.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
 
     # -----------------------------
-    # Optional methods
+    # Likes
     # -----------------------------
     def toggle_like(self, user):
-        if self.likes.filter(id=user.id).exists():
-            self.likes.remove(user)
-            return 'unliked'
-        else:
-            self.likes.add(user)
-            return 'liked'
-
-    def __str__(self):
-        return f"{self.title} | {self.author}"
-
-    def toggle_like(self, user):
-        if self.likes.filter(id=user.id).exists():
+        if self.likes.filter(pk=user.pk).exists():
             self.likes.remove(user)
             return 'unliked'
         self.likes.add(user)
@@ -177,9 +166,6 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.title} | {self.author.username}"
 
-    # -----------------------------
-    # Meta class at the end (always after fields and methods)
-    # -----------------------------
     class Meta:
         ordering = ['-created_at']
         indexes = [
