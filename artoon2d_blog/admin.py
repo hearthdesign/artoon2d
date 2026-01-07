@@ -8,13 +8,23 @@ from .models import Post
 
 @admin.register(Post) 
 class PostAdmin(admin.ModelAdmin): 
-    fields = ('title', 'content', 'image', 'theme')
-    list_display = ('id', 'title', 'author', 'theme', 'created_at') 
+    fields = ( 
+        'title', 
+        'content', 
+        'image', 
+        'theme', 
+        'category', 
+        'tags', 
+        'author',   # readonly for staff, editable for superuser
+        )
+    list_display = (
+        'id', 'title', 'author', 'theme', 'created_at') 
     search_fields = ('title', 'content') 
-    list_filter = ('theme', 'author') 
+    list_filter = ('theme', 'author', 'category') 
 
     
-    def get_readonly_fields(self, request, obj=None): # Superusers can edit the author 
+    def get_readonly_fields(self, request, obj=None): 
+        # Superusers can edit the author 
         if request.user.is_superuser: 
             return ()
         # Staff users cannot edit the author 
