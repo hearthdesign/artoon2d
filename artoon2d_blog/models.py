@@ -8,7 +8,7 @@ from django.utils.text import slugify
 # -------------------------------------------------
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=120, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=120, unique=True, blank=True, null=False)
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -43,10 +43,9 @@ class Profile(models.Model):
     visitor_count = models.PositiveIntegerField(default=0)
 
     def toggle_follow(self, target_profile):
-        """
-        Toggle follow/unfollow.
-        Returns: 'followed', 'unfollowed', or 'self'
-        """
+        
+        #Toggle follow/unfollow. 
+        # Returns: 'followed', 'unfollowed', or 'self'
         if self == target_profile:
             return 'self'
 
