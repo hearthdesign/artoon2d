@@ -1,128 +1,147 @@
 from datetime import timedelta
-from django.utils.timezone import now
-# Import the Post model from the current app's models.py
-from .models import Post, Profile
 
-# import Q for complex queries
-from django.db.models import Q, Count
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-# Import mixins for authentication and authorization
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-''' Import to create a new blog post '''
-from django.views.generic.edit import CreateView
-
+from django.db.models import Q, Count, Exists, OuterRef, F
 from django.http import JsonResponse
-from django.contrib import messages
-from django.views.decorators.http import require_POST
-
-# Import user creation form for user registration
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-
-# Import get object or 404 and redirect for like and follow views
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
-from artoon2d_blog.models import Follow
-# Visitor Counter
-from .models import VisitorCounter
+from django.utils.timezone import now
+from django.views.decorators.http import require_POST
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView, DeleteView
+)
 
-'''View to display a list of blog posts with search and sorting functionality'''
+from .models import Post, Profile, Category, VisitorCounter
+from .models import Follow
 
 
+# ---------------------------------------------------------------------
+# Post List
+# ---------------------------------------------------------------------
 class PostListView(ListView):
     model = Post
     template_name = 'artoon2d_blog/post_list.html'
     context_object_name = 'posts'
     paginate_by = 5
-    # Override get queryset to add search and filtering function
 
     def get_queryset(self):
+        qs = (
+            Post.objects
+            .select_related('author', 'author__profile', 'category')
+            .prefetch_related('tags')
+            .annotate(
+                follower_count=Count(
+                    'author__profile__follower_relations',
+                    distinct=True
+                )
+            )
+        )
+
+        user = self.request.user
+        if user.is_authenticated:
+            qs = qs.annotate(
+                is_following=Exists(
+                    Follow.objects.filter(
+                        from_profile__user=user,
+                        to_profile__user=OuterRef('author')
+                    )
+                )
+            )
+
         query = self.request.GET.get('q')
         category = self.request.GET.get('category')
         recent_days = self.request.GET.get('recent_days')
-        qs = Post.objects.all()
-        # Filter by recent days if defined and valid
-        if recent_days:
-            try:
-                days = int(recent_days)
-                cutoff = now() - timedelta(days=days)
-                qs = qs.filter(created_at__gte=cutoff)
-            except ValueError:
-                pass  # ignore invalid input
-        # Filter by search query in title, content or tags
+
+        if recent_days and recent_days.isdigit():
+            qs = qs.filter(
+                created_at__gte=now() - timedelta(days=int(recent_days))
+            )
+
         if query:
             qs = qs.filter(
                 Q(title__icontains=query) |
                 Q(content__icontains=query) |
                 Q(tags__name__icontains=query)
             ).distinct()
-        # filter by category if defined
+
         if category:
             qs = qs.filter(category__name__iexact=category)
-        # order by most recent posts first
+
         return qs.order_by('-created_at')
-    # Add context data for template rendering
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('q')
-        context['category'] = self.request.GET.get('category')
-        context['recent_days'] = self.request.GET.get('recent_days')
-        context['recent_posts'] = Post.objects.order_by('-created_at')[:5]
-        # "is_following" flag for each post's author
-        user = self.request.user
-        if user.is_authenticated:
-            profile, _ = Profile.objects.get_or_create(user=user)
-            for post in context['posts']:
-                author_profile, _ = Profile.objects.get_or_create(
-                    user=post.author)
-                post.author.is_following = profile.following.filter(
-                    id=post.author.id).exists()
-                post.author.follower_count = Follow.objects.filter(
-                    to_profile=author_profile).count()
+        context.update({
+            'categories': Category.objects.all(),
+            'recent_posts': Post.objects.order_by('-created_at')[:5],
+            'query': self.request.GET.get('q'),
+            'category': self.request.GET.get('category'),
+            'recent_days': self.request.GET.get('recent_days'),
+        })
         return context
 
 
-''' View to display the view of a single post'''
-
-
+# ---------------------------------------------------------------------
+# Post Detail
+# ---------------------------------------------------------------------
 class PostDetailView(DetailView):
     model = Post
     template_name = 'artoon2d_blog/post_detail.html'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get(self, request, *args, **kwargs):
+        if 'pk' in kwargs:
+            post = self.get_object()
+            return redirect('post_detail', slug=post.slug, permanent=True)
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related('author', 'author__profile', 'category')
+            .prefetch_related('tags')
+            .annotate(
+                follower_count=Count(
+                    'author__profile__follower_relations',
+                    distinct=True
+                )
+            )
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = context['post']
         user = self.request.user
 
-        if user.is_authenticated and user != post.author:
-            profile, _ = Profile.objects.get_or_create(user=user)
-            post.author.is_following = profile.following.filter(
-                id=post.author.id).exists()
-            post.author.follower_count = post.author.profile.new_followers.count()
+        context['is_following'] = (
+            user.is_authenticated and
+            Follow.objects.filter(
+                from_profile__user=user,
+                to_profile=post.author.profile
+            ).exists()
+        )
 
         return context
 
 
-''' View to create a new blog post '''
-
-
+# ---------------------------------------------------------------------
+# Create / Update / Delete Post
+# ---------------------------------------------------------------------
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content', 'image', 'category', 'tags', 'theme']
-    template_name = 'artoon2d_blog/post_form.html'  # Template for the form
-    # Redirect to Home after seccessful creation
+    template_name = 'artoon2d_blog/post_form.html'
     success_url = reverse_lazy('post_list')
-    # Automatically set the author to the logged-in user
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-
-
-''' View to update an existing blog post'''
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -130,137 +149,147 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ['title', 'content', 'image', 'category', 'tags', 'theme']
     template_name = 'artoon2d_blog/post_form.html'
     success_url = reverse_lazy('post_list')
-    # Ensure that only the author can edit the post
 
     def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author
-
-
-''' View to delete a blog post '''
+        return self.request.user == self.get_object().author
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'artoon2d_blog/post_confirm_delete.html'
     success_url = reverse_lazy('post_list')
-    # Ensure only the author can delete the post
 
     def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author
+        return self.request.user == self.get_object().author
 
 
-''' Home view to render the home page '''
-
-
+# ---------------------------------------------------------------------
+# Home
+# ---------------------------------------------------------------------
 def home(request):
-    # Increment total visitor count
+    VisitorCounter.objects.update_or_create(
+        id=1,
+        defaults={'total_visits': F('total_visits') + 1}
+    )
     counter = VisitorCounter.objects.first()
-    if counter:
-        counter.total_visits += 1
-        counter.save()
-    # Limit to latest 10 posts with images for the main section
-    posts_with_images = Post.objects.filter(
-        image__isnull=False).exclude(
-            image='').order_by(
-                '-created_at')[:10]
-    # Add recent posts for the sidebar (e.g., latest 5 posts)
+
+    posts = (
+        Post.objects
+        .filter(image__isnull=False)
+        .exclude(image='')
+        .select_related('author')
+        .order_by('-created_at')[:10]
+    )
+
     recent_posts = Post.objects.order_by('-created_at')[:5]
 
     return render(request, 'artoon2d_blog/home.html', {
-        'posts': posts_with_images,
+        'posts': posts,
         'recent_posts': recent_posts,
-        'visitor_count': counter.total_visits if counter else 0
+        'visitor_count': counter.total_visits if counter else 0,
     })
 
-# View to handle user registration
 
-
+# ---------------------------------------------------------------------
+# Registration & Account
+# ---------------------------------------------------------------------
 class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')
 
 
-''' View to handle user account deletion'''
-
-
 class AccountDeleteView(LoginRequiredMixin, DeleteView):
-    model = User  # Use the User model
+    model = User
     template_name = 'registration/account_confirm_delete.html'
-    success_url = reverse_lazy('home')  # Redirect after deletion
-    # Ensure only the logged-in user can delete their own account
+    success_url = reverse_lazy('home')
 
     def get_object(self):
-        return self.request.user  # Only allow users to delete themselves
+        return self.request.user
 
 
-''' View to like or unlike a post '''
-
-
+# ---------------------------------------------------------------------
+# Likes
+# ---------------------------------------------------------------------
 @login_required(login_url='register')
 @require_POST
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     action = post.toggle_like(request.user)
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({"status": action, "likes": post.likes.count()})
+        return JsonResponse({
+            'status': action,
+            'likes': post.likes.count()
+        })
+
     return redirect('post_detail', pk=post_id)
 
 
-def about_view(request):
-    return render(request, 'artoon2d_blog/about.html')
-
-
-''' View to follow or unfollow a user '''
-
-
+# ---------------------------------------------------------------------
+# Follow / Unfollow
+# ---------------------------------------------------------------------
 @login_required(login_url='register')
 @require_POST
 def follow_user(request, user_id):
-    # Get the target profile based on user ID
     target_profile = get_object_or_404(Profile, user__id=user_id)
-    user_profile, _ = Profile.objects.get_or_create(user=request.user)
+    user_profile = request.user.profile
 
-
-    # Toggle follow status
     action = user_profile.toggle_follow(target_profile)
 
-    # Handle AJAX request
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        new_follower_count = target_profile.follower_relations.count()
         return JsonResponse({
-            "status": action,
-            "follower_count": new_follower_count
+            'status': action,
+            'follower_count': target_profile.follower_relations.count()
         })
 
-    # Handle non-AJAX request with feedback
     messages.success(
         request,
         f"You {action} {target_profile.user.username}."
     )
-    return redirect('user_profile', user_id=target_profile.user.id)
+    return redirect('user_profile', user_id=user_id)
 
 
+# ---------------------------------------------------------------------
+# User Profile
+# ---------------------------------------------------------------------
 def user_profile(request, user_id):
-    target_user = get_object_or_404(User, id=user_id)
-    profile, _ = Profile.objects.get_or_create(user=target_user)
+    user = get_object_or_404(User, id=user_id)
+    profile = user.profile
 
-    # Visitor count logic
-    if request.user.is_authenticated and request.user != target_user:
-        profile.visitor_count = profile.visitor_count + 1 if profile.visitor_count else 1
-        profile.save()
+    if request.user.is_authenticated and request.user != user:
+        Profile.objects.filter(pk=profile.pk).update(
+            visitor_count=F('visitor_count') + 1
+        )
+        profile.refresh_from_db(fields=['visitor_count'])
 
-    # Posts by this user
-    posts = target_user.post_set.all()
+    posts = (
+        Post.objects
+        .filter(author=user)
+        .select_related('category')
+        .order_by('-created_at')
+    )
 
-    context = {
-        'user_profile': target_user,
+    is_following = (
+        request.user.is_authenticated and
+        Follow.objects.filter(
+            from_profile__user=request.user,
+            to_profile=profile
+        ).exists()
+    )
+
+    return render(request, 'artoon2d_blog/user_profile.html', {
+        'user_profile': user,
         'profile': profile,
         'posts': posts,
-        'is_following': request.user.is_authenticated and profile.new_followers.filter(id=request.user.id).exists(),
-        'follower_count': profile.new_followers.count(),
+        'is_following': is_following,
+        'follower_count': profile.follower_relations.count(),
         'visitor_count': profile.visitor_count or 0,
-    }
-    return render(request, 'artoon2d_blog/user_profile.html', context)
+    })
+
+
+# ---------------------------------------------------------------------
+# Static Pages
+# ---------------------------------------------------------------------
+def about_view(request):
+    return render(request, 'artoon2d_blog/about.html')

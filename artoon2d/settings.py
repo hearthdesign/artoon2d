@@ -17,7 +17,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security 
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='')
+if DEBUG: ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
     'taggit',
     'cloudinary', 
     'cloudinary_storage',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +52,7 @@ ROOT_URLCONF = 'artoon2d.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # os path to templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,9 +66,9 @@ TEMPLATES = [
     },
 ]
 
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'  # Where to go after login
-LOGOUT_REDIRECT_URL = '/'  # Where to go after logout
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'  # Where to go after login
+LOGOUT_REDIRECT_URL = 'home'  # Where to go after logout
 
 
 LOGGING = { 
@@ -80,7 +82,7 @@ LOGGING = {
     }, 
     'root': { 
         'handlers': ['console'], 
-        'level': 'ERROR', 
+        'level': 'ERROR',
     }, 
 }
 
@@ -134,7 +136,7 @@ CLOUDINARY_URL = config('CLOUDINARY_URL')
 
 # Media files (uploaded by users)
 MEDIA_URL = '/media/'
-
+MEDIA_ROOT = BASE_DIR / 'media'
 
 WSGI_APPLICATION = 'artoon2d.wsgi.application'
 
@@ -145,3 +147,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Security (correct for Heroku)
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+if DEBUG: 
+    CSRF_COOKIE_SECURE = False 
+    SESSION_COOKIE_SECURE = False
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

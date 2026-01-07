@@ -1,3 +1,4 @@
+{% load static %}
 {% if request.user.is_authenticated and request.user != target_user %}
   <div class="follow-container">
     <button class="follow-btn {% if is_following %}followed{% else %}unfollowed{% endif %}" data-user-id="{{ target_user.id }}">

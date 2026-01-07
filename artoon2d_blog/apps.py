@@ -6,4 +6,4 @@ class Artoon2DBlogConfig(AppConfig):
     name = 'artoon2d_blog'
 
     def ready(self):
-        import artoon2d_blog.signals
+      from . import signals
