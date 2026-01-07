@@ -8,17 +8,20 @@ from .models import Post
 
 @admin.register(Post) 
 class PostAdmin(admin.ModelAdmin): 
-    fields = ( 
-        'title', 
-        'content', 
-        'image', 
-        'theme', 
-        'category', 
-        'tags', 
-        'author',   # readonly for staff, editable for superuser
-        )
+    fieldsets = ( 
+        ('Main Content', 
+         { 'fields': ('title', 'content', 'image') 
+          }), 
+          ('Classification', { 
+              'fields': ('theme', 'category', 'tags') 
+              }), 
+              ('Metadata', { 
+                  'fields': ('author',) # readonly for staff, editable for superuser
+                  }), 
+                                                                      )
+
     list_display = (
-        'id', 'title', 'author', 'theme', 'created_at') 
+        'id', 'title', 'author', 'theme', 'category', 'created_at') 
     search_fields = ('title', 'content') 
     list_filter = ('theme', 'author', 'category') 
 
