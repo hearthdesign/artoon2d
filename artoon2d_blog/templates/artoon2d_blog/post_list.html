@@ -1,53 +1,49 @@
 {% extends 'artoon2d_blog/base.html' %}
 {% load cloudinary %}
 {% block content %}
-  <!-- Search and filter form -->
-  <div class="category-filter">
+<div class="category-filter">
     <form method="get">
-      <input type="text" name="q" placeholder="Search..." value="{{ query }}">
-      <select name="category">
-        <option value="">All Categories</option>
-        {% for cat in categories %}
-          <option value="{{ cat.slug }}" {% if cat.slug == category %}selected{% endif %}>
-    {{ cat.name }}
-</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Filter</button>
+        <input type="text" name="q" placeholder="Search..." value="{{ query }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat.slug }}" {% if cat.slug == category %}selected{% endif %}>
+                  {{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filter</button>
     </form>
-  </div>
+</div>
 
-  <!-- Post list -->
-  {% for post in page_obj %}
+{% for post in page_obj %}
     <div class="post-card">
-    {% if post.image %}
-      <img
-        src="{{ post.image.url }}?f_auto&q_auto"
-        alt="{{ post.title|default:'Post image' }}"
-        class="thumbnail"
-        loading="lazy">
-    {% endif %}
-      <h2 class="p-list-title">
-        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-      </h2>
+        {% if post.image %}
+            {% cloudinary post.image width=600 crop="scale" alt=post.title class="thumbnail" %}
+        {% endif %}
+        <h2 class="p-list-title">
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </h2>
     </div>
-  {% empty %}
+{% empty %}
     <p>No posts found.</p>
-  {% endfor %}
+{% endfor %}
 
-  <!-- Scroll to top button -->
-  <button onclick="scrollToTop()" class="scroll-top-btn" id="scrollTopBtn" title="Go to top">↑</button>
+<button onclick="scrollToTop()" class="scroll-top-btn" 
+id="scrollTopBtn" title="Go to top">↑</button>
 
-  <!-- Pagination controls -->
-  <div class="pagination">
+<div class="pagination">
     {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Previous</a>
+        <a href="?page={{ page_obj.previous_page_number }}
+        {% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}
+        {% endif %}">Previous</a>
     {% endif %}
 
     <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
 
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.next_page_number }}
+        {% if query %}&q={{ query }}{% endif %}
+        {% if category %}&category={{ category }}{% endif %}">Next</a>
     {% endif %}
-  </div>
+</div>
 {% endblock %}

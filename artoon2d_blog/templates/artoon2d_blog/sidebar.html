@@ -1,16 +1,17 @@
-{# artoon2d_blog/templates/artoon2d_blog/sidebar.html #}
 <aside class="sidebar_recent">
-  <button class="toggle-btn" onclick="toggleRecentPosts()">Recent Posts</button>
-  <ul id="recentPostsList" class="recent-posts-list">
-    {% for recent_post in recent_posts %}
-      <li><a href="{% url 'post_detail' recent_post.pk %}">{{ recent_post.title }}</a></li>
-    {% endfor %}
-  </ul>
+    <button class="toggle-btn" onclick="toggleRecentPosts()">Recent Posts</button>
+    <ul id="recentPostsList" class="recent-posts-list">
+        {% for recent_post in recent_posts %}
+            <li><a href="{{ recent_post.get_absolute_url }}">{{ recent_post.title }}</a></li>
+        {% empty %}
+            <li>No recent posts</li>
+        {% endfor %}
+    </ul>
 </aside>
 
 <script>
-  function toggleRecentPosts() {
+function toggleRecentPosts() {
     const list = document.getElementById("recentPostsList");
     list.style.display = list.style.display === "flex" ? "none" : "flex";
-  }
+}
 </script>

@@ -1,3 +1,5 @@
+{% extends 'artoon2d_blog/base.html' %}
+
 {% block title %}
 {{ category.name }} | Artoon2d Blog
 {% endblock %}
@@ -9,4 +11,32 @@
 <meta property="og:title" content="{{ category.name }}">
 <meta property="og:description" content="Browse posts in {{ category.name }}.">
 <meta property="og:type" content="website">
+{% endblock %}
+
+{% block content %}
+  {# Sidebar with recent posts #}
+  <div class="sidebar-div">{% include 'artoon2d_blog/sidebar.html' %}</div>
+
+  <h1>Category: {{ category.name }}</h1>
+
+  <div class="category-posts">
+    {% for post in posts %}
+      <div class="post-card">
+        {% if post.image %}
+          {% cloudinary post.image width=600 crop="scale" alt=post.title class="thumbnail" %}
+        {% endif %}
+        <h2 class="p-list-title">
+          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </h2>
+        <p>{{ post.summary }}</p>
+        <a href="{{ post.get_absolute_url }}">Read More</a>
+      </div>
+    {% empty %}
+      <p>No posts found in this category.</p>
+    {% endfor %}
+  </div>
+
+  {# Scroll to top button for consistency #}
+  <button onclick="scrollToTop()" class="scroll-top-btn" id="scrollTopBtn" title="Go to top">↑</button>
+
 {% endblock %}

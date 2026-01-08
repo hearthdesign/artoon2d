@@ -4,41 +4,48 @@
 {% block title %}Welcome to ARTOON2D Blog{% endblock %}
 
 {% block content %}
-    {# Sidebar with recent posts #}
-    <div class="sidebar-div">{% include 'artoon2d_blog/sidebar.html' %}</div>
-    
-<div class="hero">
-    <h1>Hello!</h1>
-    <a href="{% url 'post_list' %}">VIEW BLOG POSTS</a>
-</div>
-<div class="featured-posts">
-    <h2>Featured Posts</h2>
-    <ul>
-        {% for post in featured_posts %}
-            <li>
-                <h3>{{ post.title }}</h3>
-                <p>{{ post.summary }}</p>
-                <a href="{% url 'post_detail' post.pk %}">Read More</a>
-            </li>
-        {% endfor %}
-    </ul>
+<div class="layout-row">
+    <div class="sidebar-div">
+        {% include 'artoon2d_blog/sidebar.html' %}
+    </div>
+
+    <main>
+        <div class="hero">
+            <h1>Hello!</h1>
+            <a href="{{ post_list_url|default:request.build_absolute_uri }}">VIEW BLOG POSTS</a>
+        </div>
+
+        <div class="featured-posts">
+            <h2>Featured Posts</h2>
+            <ul>
+                {% for post in featured_posts %}
+                    <li>
+                        <h3>{{ post.title }}</h3>
+                        <p>{{ post.summary }}</p>
+                        <a href="{{ post.get_absolute_url }}">Read More</a>
+                    </li>
+                {% empty %}
+                    <li>No featured posts.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="carousel">
+            <div class="carousel-track">
+                {% for post in posts %}
+                    {% if post.image %}
+                        <a href="{{ post.get_absolute_url }}" style="display:block; width:100%; height:100%;">
+                            {% cloudinary post.image width=800 crop="scale" 
+                            alt=post.title class="carousel-slide" %}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button class="carousel-btn prev" aria-label="Previous Slide">&lt;</button>
+            <button class="carousel-btn next" aria-label="Next Slide">></button>
+        </div>
+    </main>
 </div>
 
-<div class="carousel">
-  <div class="carousel-track">
-    {% for post in posts %}
-      {% if post.image %}
-        <a href="{% url 'post_detail' post.pk %}" style="  display: block;
-  width: 100%; height: 100%;">
-          <img src="{{ post.image.url }}" class="carousel-slide" alt="{{ post.title }}">
-        </a>
-      {% endif %}
-    {% endfor %}
-  </div>
-  <button class="carousel-btn prev">&lt;</button>
-  <button class="carousel-btn next">></button>
-  <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
-</div>
-
+<script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
 {% endblock %}
-
