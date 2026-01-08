@@ -140,13 +140,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Cloudinary configuration for media file storage
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-cloud_config(
-    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
-    api_key=config('CLOUDINARY_API_KEY'),
-    api_secret=config('CLOUDINARY_API_SECRET')
-)
-
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': config('CLOUDINARY_API_KEY'),
@@ -184,28 +177,30 @@ SITE_URL = config(
 # Works for both local development and production (Heroku Upstash Redis)
 # ======================
 
-if not DEBUG and config('REDIS_URL', default=None):
-    # Production / Heroku / Upstash
+REDIS_URL = config("REDIS_URL", default=None)
+
+if not DEBUG and REDIS_URL:
+    # Production (Heroku / Upstash)
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": config("REDIS_URL"),
+            "LOCATION": REDIS_URL,
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             },
-            "TIMEOUT": 60 * 15,  # 15 minutes
+            "TIMEOUT": 60 * 15,
         }
     }
 else:
-    # Local development fallback (NO Redis required)
+    # Local development (NO Redis required)
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         }
     }
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
 
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
