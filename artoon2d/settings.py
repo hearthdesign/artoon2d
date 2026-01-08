@@ -184,23 +184,18 @@ SITE_URL = config(
 # Works for both local development and production (Heroku Upstash Redis)
 
 # Default fallback for local development
-LOCAL_REDIS_URL = "redis://127.0.0.1:6379/1"
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config(
-            "REDIS_URL", 
-            default=config("UPSTASH_REDIS_REST_URL", default="redis://localhost:6379/1")
-        ),
+        "LOCATION": config("REDIS_URL"),  # now uses your Upstash URL
         "OPTIONS": {
-            # Required by Upstash (REST token)
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": config("UPSTASH_REDIS_REST_TOKEN", default=None),
+            "PASSWORD": config("UPSTASH_REDIS_REST_TOKEN"),
         },
-        "TIMEOUT": 60 * 15,  # cache timeout 15 min
+        "TIMEOUT": 60 * 15,
     }
 }
+
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
