@@ -179,11 +179,16 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # ---------------------------------------------------------------------
 @cache_page(60 * 5)  # 5 minutes
 def home(request):
-    VisitorCounter.objects.update_or_create(
+    counter, created = VisitorCounter.objects.get_or_create(
         id=1,
-        defaults={'total_visits': F('total_visits') + 1}
+        defaults={'total_visits': 1}
     )
-    counter = VisitorCounter.objects.first()
+
+    if not created:
+        VisitorCounter.objects.filter(id=counter.id).update(
+            total_visits=F('total_visits') + 1
+        )
+        counter.refresh_from_db()
 
     posts = (
         Post.objects
@@ -198,9 +203,8 @@ def home(request):
     return render(request, 'artoon2d_blog/home.html', {
         'posts': posts,
         'recent_posts': recent_posts,
-        'visitor_count': counter.total_visits if counter else 0,
+        'visitor_count': counter.total_visits,
     })
-
 
 # ---------------------------------------------------------------------
 # Registration & Account

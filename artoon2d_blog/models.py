@@ -147,18 +147,25 @@ class Post(models.Model):
     # Auto-generated slug
     # -----------------------------
     def save(self, *args, **kwargs):
-        if not self.slug or self.pk and Post.objects.filter(pk=self.pk, title__ne=self.title):
+        if not self.slug or (
+        self.pk and
+        Post.objects.filter(pk=self.pk)
+        .exclude(title=self.title)
+        .exists()
+    ):
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
+
             while Post.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
+                
             self.slug = slug
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('post_detail', kwargs={'slug': self.slug})
+        return reverse('post_detail', kwargs={'pk': self.pk})
     # -----------------------------
     # Likes
     # -----------------------------
@@ -187,7 +194,7 @@ class VisitorCounter(models.Model):
 
     class Meta:
         verbose_name = "Visitor Counter"
-        verbose_name_plural = "Visitor Counter"
+        verbose_name_plural = "Visitor Counters"
 
     def __str__(self):
         return f"Total visits: {self.total_visits}"
