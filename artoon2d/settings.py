@@ -182,19 +182,30 @@ SITE_URL = config(
 # --------------------
 # Use Redis for caching views (like @cache_page) and other cache needs
 # Works for both local development and production (Heroku Upstash Redis)
+# ======================
 
-# Default fallback for local development
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_URL"),  # now uses your Upstash URL
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": config("UPSTASH_REDIS_REST_TOKEN"),
-        },
-        "TIMEOUT": 60 * 15,
+if not DEBUG and config('REDIS_URL', default=None):
+    # Production / Heroku / Upstash
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": config("REDIS_URL"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+            "TIMEOUT": 60 * 15,  # 15 minutes
+        }
     }
-}
+else:
+    # Local development fallback (NO Redis required)
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
