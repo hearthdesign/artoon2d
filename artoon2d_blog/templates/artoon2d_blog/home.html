@@ -1,6 +1,7 @@
-{% extends 'artoon2d_blog/base.html' %}
+{% extends 'artoon2d_blog/base.html' %} 
 {% load static %}
 {% load cloudinary %}
+
 {% block title %}Welcome to ARTOON2D Blog{% endblock %}
 
 {% block content %}
@@ -35,8 +36,7 @@
                 {% for post in posts %}
                     {% if post.image %}
                         <a href="{{ post.get_absolute_url }}" style="display:block; width:100%; height:100%;">
-                            {% cloudinary post.image width=800 crop="scale" 
-                            alt=post.title class="carousel-slide" %}
+                            {% cloudinary post.image width=800 crop="scale" alt=post.title class="carousel-slide" %}
                         </a>
                     {% endif %}
                 {% endfor %}

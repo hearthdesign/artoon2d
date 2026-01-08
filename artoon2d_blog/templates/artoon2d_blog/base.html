@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
-
 <html lang="en">
 <head>
-    {% load static %}
-
     <!-- Basic -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,81 +30,118 @@
     <link rel="stylesheet" href="{% static 'artoon2d_blog/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-    <div class="page_wrapper">
-        
-    <header>
-        {# Navigation bar #}
-        <nav class="navbar">
-            <ul>
-                <li><a href="{% url 'home' %}" class="nav-button {% if request.resolver_match.url_name == 
-                    'home' %}active{% endif %}">Artoon2d</a></li>
-                <li><form action="{% url 'post_list' %}" method="get">
-                    <button class="nav-button {% if request.resolver_match.url_name == 'post_list' %}
-                    active{% endif %}">Posts</button>
-                </form></li>
-                {% if user.is_authenticated %}
-                <li><form action="{% url 'post_create' %}" method="get">
-                    <button class="nav-button">New Post</button></form></li>
-                <li><form action="{% url 'logout' %}" method="post">{% csrf_token %}
-                    <button class="nav-button">Logout</button></form></li>
-                {% else %}
-                <li><form action="{% url 'login' %}" method="get">
-                    <button class="nav-button {% if request.resolver_match.url_name == 'login' %}
-                    active{% endif %}">Login</button></form></li>
-                <li><form action="{% url 'register' %}" method="get">
-                    <button class="nav-button {% if request.resolver_match.url_name == 'register' %}
-                    active{% endif %}">Register</button>
-                </form></li>
-                {% endif %}
-            </ul>
-        </nav>
-        
-    </header>
-    
-    <div class="layout-row">
+<div class="page_wrapper">
+
+<header>
+    {# Navigation bar #}
+    <nav class="navbar">
+        <ul>
+            <li>
+                <a href="{% url 'home' %}"
+                   class="nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    Artoon2d
+                </a>
+            </li>
+
+            <li>
+                <form action="{% url 'post_list' %}" method="get">
+                    <button class="nav-button {% if request.resolver_match.url_name == 'post_list' %}active{% endif %}">
+                        Posts
+                    </button>
+                </form>
+            </li>
+
+            {% if user.is_authenticated %}
+            <li>
+                <form action="{% url 'post_create' %}" method="get">
+                    <button class="nav-button">New Post</button>
+                </form>
+            </li>
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="nav-button">Logout</button>
+                </form>
+            </li>
+            {% else %}
+            <li>
+                <form action="{% url 'login' %}" method="get">
+                    <button class="nav-button {% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+                        Login
+                    </button>
+                </form>
+            </li>
+            <li>
+                <form action="{% url 'register' %}" method="get">
+                    <button class="nav-button {% if request.resolver_match.url_name == 'register' %}active{% endif %}">
+                        Register
+                    </button>
+                </form>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+
+<div class="layout-row">
     <main class="content">
-    <div>
-        {# Breadcrumbs block #}
-        {% block breadcrumbs %}{% endblock %}
-        {% block content %}{% endblock %}
-    </div>
+        <div>
+            {# Breadcrumbs block #}
+            {% block breadcrumbs %}{% endblock %}
+
+            {% block content %}{% endblock %}
+        </div>
     </main>
 </div>
-<div class="visitor-count"><p>Total visitors: {{ visitor_count }}</p></div>
-    <footer>
-        <div class="informations">
-            <p id="p-info"><a href="mailto:1.space.channel.1@gmail.com">Contact</a>
-            <a href="{% url 'about' %}">About</a></p>
-            <p>&copy; 2025 Artoon2d Blog</p>
-        </div>
-        <div class="social_btn_s">
-            {% if post %}
-            <button class="mastodon-share-btn icon-button" aria-label="Follow" 
+
+<div class="visitor-count">
+    <p>Total visitors: {{ visitor_count }}</p>
+</div>
+
+<footer>
+    <div class="informations">
+        <p id="p-info">
+            <a href="mailto:1.space.channel.1@gmail.com">Contact</a>
+            <a href="{% url 'about' %}">About</a>
+        </p>
+        <p>&copy; 2025 Artoon2d Blog</p>
+    </div>
+
+    <div class="social_btn_s">
+        {% if post %}
+        <button class="mastodon-share-btn icon-button"
+                aria-label="Follow"
                 data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
                 onclick="MastodonShare(event)">
-                <i class="fa-brands fa-mastodon"></i>
-            </button>
-            <span class="hover-label">Follow</span>
-            <button class="pixelfeld-share-btn icon-button" aria-label="Follow" 
+            <i class="fa-brands fa-mastodon"></i>
+        </button>
+        <span class="hover-label">Follow</span>
+
+        <button class="pixelfeld-share-btn icon-button"
+                aria-label="Follow"
                 data-src="{{ post.title }} - {{ request.build_absolute_uri }}"
                 onclick="PixelfeldShare(event)">
-                <i class="fa-solid fa-share-nodes"></i>
-            </button>
-            <span class="hover-label">Follow</span>
-            <button class="friendica-share-btn icon-button" aria-label="Follow" 
+            <i class="fa-solid fa-share-nodes"></i>
+        </button>
+        <span class="hover-label">Follow</span>
+
+        <button class="friendica-share-btn icon-button"
+                aria-label="Follow"
                 data-title="{{ post.title }}"
                 data-url="{{ request.build_absolute_uri }}"
                 onclick="FriendicaShare(event)">
-                <i class="fa-solid fa-share-from-square fa fa-user-plus"></i>
-            </button>
-            <span class="hover-label">Follow</span>
-            {% endif %}
-        </div>
-    </footer>
+            <i class="fa-solid fa-share-from-square fa fa-user-plus"></i>
+        </button>
+        <span class="hover-label">Follow</span>
+        {% endif %}
     </div>
-    <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
-    <script src="{% static 'artoon2d_blog/js/follow.js' %}"></script>
+</footer>
 
+</div>
+
+<script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>
+<script src="{% static 'artoon2d_blog/js/follow.js' %}"></script>
 </body>
 </html>
