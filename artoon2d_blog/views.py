@@ -133,7 +133,7 @@ class PostDetailView(DetailView):
             user.is_authenticated and
             Follow.objects.filter(
                 from_profile__user=user,
-                to_profile=post.author.profile
+                to_profile = getattr(post.author, "profile", None)
             ).exists()
         )
 
@@ -222,7 +222,6 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_object(self):
         return self.request.user
-
 
 # ---------------------------------------------------------------------
 # Likes
