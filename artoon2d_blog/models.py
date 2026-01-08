@@ -129,7 +129,7 @@ class Post(models.Model):
         blank=True,
         related_name='posts'
     )
-
+    # CloudinaryField automatically handles uploads to the Cloudinary account
     image = CloudinaryField('image', blank=True, null=True)
     theme = models.CharField(max_length=100, blank=True, null=True)
 
