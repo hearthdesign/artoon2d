@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security 
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost,127.0.0.1')
 if DEBUG: ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -71,7 +71,9 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'  # Where to go after login
 LOGOUT_REDIRECT_URL = 'home'  # Where to go after logout
 
-
+# --------------------
+# LOGGING
+# --------------------
 LOGGING = { 
     'version': 1, 
     'disable_existing_loggers': False, 
@@ -82,16 +84,17 @@ LOGGING = {
         }, 
     }, 
     'root': { 
-        'handlers': ['console'], 
-        'level': 'ERROR',
+        'handlers': ['console'],
+        'level': 'INFO' if DEBUG else 'ERROR',
     }, 
 }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 DATABASES = {
-    'default':
-        dj_database_url.config(default=config('DATABASE_URL'))
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
 }
 
 
@@ -151,6 +154,19 @@ SESSION_COOKIE_SECURE = True
 if DEBUG: 
     CSRF_COOKIE_SECURE = False 
     SESSION_COOKIE_SECURE = False
+
+SITE_ID = 1
+
+SITE_URL = config(
+    'SITE_URL',
+    default='http://127.0.0.1:8000'
+)
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from artoon2d_blog.sitemaps import PostSitemap, CategorySitemap, StaticViewSitemap
+from django.views.generic import TemplateView
 
 sitemaps = {
     'posts': PostSitemap,
@@ -26,7 +27,13 @@ urlpatterns = [
 # -------------------------------------------
 urlpatterns += [    
     #Robot.txt
-    path('robots.txt', robots_txt, name='robots_txt'),
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="artoon2d_blog/robots.txt",
+            content_type="text/plain",
+        ),
+    ),
     # Sitemap
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 ]

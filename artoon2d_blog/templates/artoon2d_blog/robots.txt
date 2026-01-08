@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and auth pages
+Disallow: /admin/
+Disallow: /accounts/
+
+# Sitemap location
+Sitemap: https://artoon2d-ad3b8f5dfe58.herokuapp.com/sitemap.xml
