@@ -1,0 +1,12 @@
+{% block title %}
+{{ category.name }} | Artoon2d Blog
+{% endblock %}
+
+{% block seo %}
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+<meta name="description" content="Posts filed under {{ category.name }} on Artoon2d Blog.">
+
+<meta property="og:title" content="{{ category.name }}">
+<meta property="og:description" content="Browse posts in {{ category.name }}.">
+<meta property="og:type" content="website">
+{% endblock %}

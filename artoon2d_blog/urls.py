@@ -23,15 +23,14 @@ from .views import (
      user_profile,
      )
     
-
 # Define URL patterns for the blog app
 urlpatterns = [ 
+     # Home
      path('', home, name='home'),
      # Post 
      path('posts/', PostListView.as_view(), name='post_list'),
      path('post/new/', PostCreateView.as_view(), name='post_create'),
      path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'), # SEO friendly
-     path('post/id/<int:pk>/', PostDetailView.as_view(), name='post_detail_by_id'), # fallback numeric ID
      path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post_update'),
      path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
 

@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from taggit.managers import TaggableManager
 from django.utils.text import slugify
+from django.urls import reverse
+from taggit.managers import TaggableManager
 
 # -------------------------------------------------
 # Category
@@ -25,6 +26,9 @@ class Category(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('category_posts', kwargs={'slug': self.slug})
+    
     def __str__(self):
         return self.name
 
@@ -143,7 +147,7 @@ class Post(models.Model):
     # Auto-generated slug
     # -----------------------------
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if not self.slug or self.pk and Post.objects.filter(pk=self.pk, title__ne=self.title):
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
@@ -153,6 +157,8 @@ class Post(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('post_detail', kwargs={'slug': self.slug})
     # -----------------------------
     # Likes
     # -----------------------------

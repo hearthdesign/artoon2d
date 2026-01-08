@@ -1,6 +1,18 @@
 {% extends 'artoon2d_blog/base.html' %}
 {% load cloudinary %}
 {% block title %}{{ post.title }}{% endblock %}
+{# SEO Meta Tags #}
+{% block seo %}
+<link rel="canonical" href="{{ canonical_url }}">
+<meta name="description" content="{{ post.content|truncatechars:160 }}">
+
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.content|truncatechars:160 }}">
+<meta property="og:type" content="article">
+{% if post.image %}
+<meta property="og:image" content="{{ post.image.url }}">
+{% endif %}
+{% endblock %}
 
 {% block content %}
     <form method="post" action="{% url 'like_post' post.id %}" class="likes-form">

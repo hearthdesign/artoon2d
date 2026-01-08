@@ -6,22 +6,35 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.db.models import Q, Count, Exists, OuterRef, F
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
-
 from .models import Post, Profile, Category, VisitorCounter
 from .models import Follow
 
+# ---------------------------------------------------------------------
+# Tobots.txt
+# ---------------------------------------------------------------------
+def robots_txt(request):
+    lines = [
+        "User-Agent: *",
+        "Disallow: /admin/",
+        "Disallow: /accounts/",
+        "Sitemap: " + request.build_absolute_uri("/sitemap.xml"),
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
 
 # ---------------------------------------------------------------------
 # Post List
 # ---------------------------------------------------------------------
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class PostListView(ListView):
     model = Post
     template_name = 'artoon2d_blog/post_list.html'
@@ -53,7 +66,7 @@ class PostListView(ListView):
             )
 
         query = self.request.GET.get('q')
-        category = self.request.GET.get('category')
+        category_slug = self.kwargs.get('slug') or self.request.GET.get('category')
         recent_days = self.request.GET.get('recent_days')
 
         if recent_days and recent_days.isdigit():
@@ -68,8 +81,8 @@ class PostListView(ListView):
                 Q(tags__name__icontains=query)
             ).distinct()
 
-        if category:
-            qs = qs.filter(category__name__iexact=category)
+        if category_slug:
+            qs = qs.filter(category__slug=category_slug)
 
         return qs.order_by('-created_at')
 
@@ -94,12 +107,6 @@ class PostDetailView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
-    def get(self, request, *args, **kwargs):
-        if 'pk' in kwargs:
-            post = self.get_object()
-            return redirect('post_detail', slug=post.slug, permanent=True)
-        return super().get(request, *args, **kwargs)
-
     def get_queryset(self):
         return (
             super()
@@ -116,6 +123,9 @@ class PostDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['canonical_url'] = self.request.build_absolute_uri(
+            self.object.get_absolute_url()
+        )
         post = context['post']
         user = self.request.user
 
@@ -137,7 +147,8 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content', 'image', 'category', 'tags', 'theme']
     template_name = 'artoon2d_blog/post_form.html'
-    success_url = reverse_lazy('post_list')
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -166,6 +177,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # ---------------------------------------------------------------------
 # Home
 # ---------------------------------------------------------------------
+@cache_page(60 * 5)  # 5 minutes
 def home(request):
     VisitorCounter.objects.update_or_create(
         id=1,
@@ -223,7 +235,7 @@ def like_post(request, post_id):
             'likes': post.likes.count()
         })
 
-    return redirect('post_detail', pk=post_id)
+    return redirect('post_detail', slug=post.slug)
 
 
 # ---------------------------------------------------------------------

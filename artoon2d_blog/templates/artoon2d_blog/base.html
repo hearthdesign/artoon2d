@@ -3,26 +3,33 @@
 
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {% load static %}
 
-    <meta name="description" content="Explore ARTOON2D Blog - a creative space for digital art, 
-    animation, and storytelling.">
+    <!-- Basic -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>{% block title %}Artoon2d Blog{% endblock %}</title>
+
+    <!-- SEO / Open Graph -->
+    {% block seo %}
+    <meta name="description" content="Explore ARTOON2D Blog, a creative space for digital art, animation, and storytelling.">
     <meta name="keywords" content="art, animation, blog, ARTOON2D, digital illustration, storytelling">
     <meta name="author" content="Silvio Streddi">
 
+    <meta property="og:site_name" content="ARTOON2D Blog">
     <meta property="og:title" content="ARTOON2D Blog">
-    <meta property="og:description" content="Discover featured posts and creative insights from the 
-    ARTOON2D community.">
+    <meta property="og:description" content="Discover featured posts and creative insights from the ARTOON2D community.">
+    <meta property="og:type" content="website">
     <meta property="og:image" content="{% static 'artoon2d_blog/assets/images/og-image.jpg' %}">
+    {% endblock %}
 
     <!-- Favicon -->
     <link rel="icon" href="{% static 'artoon2d_blog/assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Title block for dynamic page titles -->
-    <title>{% block title %}Artoon2d Blog{% endblock %}</title>
-    {% comment %} {% load static %} {% endcomment %}
-     <!-- Stylesheets -->
+
+    <!-- Styles -->
     <link rel="stylesheet" href="{% static 'artoon2d_blog/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
