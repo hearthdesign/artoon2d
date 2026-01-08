@@ -3,7 +3,13 @@ import sys
 from pathlib import Path
 from decouple import config, Csv  # Import decouple to manage enviroment variables
 import dj_database_url
+import cloudinary
+from dotenv import load_dotenv
 
+# Load .env file for local development
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv()  # reads the .env file
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,7 +103,6 @@ DATABASES = {
     )
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -134,9 +139,11 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Cloudinary configuration for media file storage
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-CLOUDINARY_URL = config('CLOUDINARY_URL')
-
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 # Media files (uploaded by users)
 MEDIA_URL = '/media/'

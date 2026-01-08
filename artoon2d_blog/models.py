@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.urls import reverse
 from taggit.managers import TaggableManager
+from cloudinary.models import CloudinaryField
 
 # -------------------------------------------------
 # Category
@@ -129,7 +130,7 @@ class Post(models.Model):
         related_name='posts'
     )
 
-    image = models.ImageField(upload_to='post_images/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     theme = models.CharField(max_length=100, blank=True, null=True)
 
     tags = TaggableManager(blank=True)
@@ -160,7 +161,7 @@ class Post(models.Model):
             while Post.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
-                
+
             self.slug = slug
         super().save(*args, **kwargs)
 
