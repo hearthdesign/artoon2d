@@ -174,34 +174,38 @@ SITE_URL = config(
 # Caching (Redis) setup
 # --------------------
 # Use Redis for caching views (like @cache_page) and other cache needs
-# Works for both local development and production (Heroku Upstash Redis)
+# For both local development and production (Heroku Upstash Redis)
 # ======================
 
-REDIS_URL = config("REDIS_URL", default=None)
+# REDIS_URL = config("REDIS_URL", default=None)
 
-if not DEBUG and REDIS_URL:
-    # Production (Heroku / Upstash)
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            },
-            "TIMEOUT": 60 * 15,
-        }
-    }
-else:
-    # Local development (NO Redis required)
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        }
-    }
+# if not DEBUG and REDIS_URL:
+#     # Production (Heroku / Upstash)
+#     CACHES = {
+#         "default": {
+#             "BACKEND": "django_redis.cache.RedisCache",
+#             "LOCATION": REDIS_URL,
+#             "OPTIONS": {
+#                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             },
+#             "TIMEOUT": 60 * 15,
+#         }
+#     }
+# else:
+#     # Local development (NO Redis required)
+#     CACHES = {
+#         "default": {
+#             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+#         }
+#     }
 
 # SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 # SESSION_CACHE_ALIAS = "default"
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
