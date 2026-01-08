@@ -177,6 +177,15 @@ SITE_URL = config(
     default='http://127.0.0.1:8000'
 )
 
+# --------------------
+# Caching (Redis) setup
+# --------------------
+# Use Redis for caching views (like @cache_page) and other cache needs
+# Works for both local development and production (Heroku Upstash Redis)
+
+# Default fallback for local development
+LOCAL_REDIS_URL = "redis://127.0.0.1:6379/1"
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -185,10 +194,11 @@ CACHES = {
             default=config("UPSTASH_REDIS_REST_URL", default="redis://localhost:6379/1")
         ),
         "OPTIONS": {
+            # Required by Upstash (REST token)
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PASSWORD": config("UPSTASH_REDIS_REST_TOKEN", default=None),
         },
-        "TIMEOUT": 60 * 15,  # cache timeout 15 min, adjust as needed
+        "TIMEOUT": 60 * 15,  # cache timeout 15 min
     }
 }
 
