@@ -60,8 +60,10 @@
     {# Post image #}
     {% if post.image %}
     <div>
-        {% cloudinary post.image width=800 crop="scale" 
+        {% cloudinary post.image width=600 crop="scale" 
         alt=post.title class="post-img" loading="lazy" %}
+    {% else %}
+        <img src="{% static 'default-image.jpg' %}" alt="No image" class="post-img">
     </div>
     {% endif %}
 
