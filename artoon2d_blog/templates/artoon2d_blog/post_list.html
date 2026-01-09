@@ -28,9 +28,6 @@
     <p>No posts found.</p>
 {% endfor %}
 
-<button onclick="scrollToTop()" class="scroll-top-btn" 
-id="scrollTopBtn" title="Go to top">↑</button>
-
 <div class="pagination">
     {% if page_obj.has_previous %}
         <a href="?page={{ page_obj.previous_page_number }}

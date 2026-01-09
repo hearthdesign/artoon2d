@@ -423,7 +423,7 @@ main {
 }
 
 .post-image {
-  max-width: 15%;
+  max-width: 35%;
   gap: 1rem;
   height: 5vh;
 }

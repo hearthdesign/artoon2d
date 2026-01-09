@@ -10,7 +10,7 @@
         {% include 'artoon2d_blog/sidebar.html' %}
     </div>
 
-    <main>
+    
         <div class="hero">
             <h1>Hello!</h1>
             <a href="{{ post_list_url|default:request.build_absolute_uri }}">VIEW BLOG POSTS</a>
@@ -44,7 +44,7 @@
             <button class="carousel-btn prev" aria-label="Previous Slide">&lt;</button>
             <button class="carousel-btn next" aria-label="Next Slide">></button>
         </div>
-    </main>
+    
 </div>
 
 <script src="{% static 'artoon2d_blog/js/scripts.js' %}"></script>

@@ -37,20 +37,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================
-     SCROLL TO TOP BUTTON (SAFE)
+     SCROLL TO TOP BUTTON 
   ========================= */
 
   const scrollTopBtn = document.getElementById("scrollTopBtn");
-
   if (scrollTopBtn) {
+    // Ensure initial state hidden
+    scrollTopBtn.style.display = "none";
+
+    // Show/hide button on scroll
     window.addEventListener("scroll", () => {
-      if (document.documentElement.scrollTop > 300) {
-        scrollTopBtn.style.display = "block";
-      } else {
-        scrollTopBtn.style.display = "none";
-      }
+      scrollTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
     });
 
+    // Smooth scroll to top on click
     scrollTopBtn.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
