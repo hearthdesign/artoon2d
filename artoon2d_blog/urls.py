@@ -27,7 +27,7 @@ from .views import (
 urlpatterns = [ 
      # Home
      path('', home, name='home'),
-     # Post 
+     # Post
      path('posts/', PostListView.as_view(), name='post_list'),
      path('post/new/', PostCreateView.as_view(), name='post_create'),
      path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'), # SEO friendly
@@ -52,6 +52,10 @@ urlpatterns = [
 
      # Static pages 
      path('about/', about_view, name='about'),
+
+     # Post Editing Delete
+     path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post_update'),
+     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
 ]
 
      # Media files (local dev only) 
