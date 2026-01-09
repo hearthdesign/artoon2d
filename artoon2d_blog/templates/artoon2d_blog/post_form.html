@@ -1,10 +1,26 @@
 {% extends 'artoon2d_blog/base.html' %}
-{% block content %}
-  <h2>{% if object %}Edit{% else %}Create{% endif %} Post</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
 
+{% block content %}
+<h2>
+  {% if object %}Edit{% else %}Create{% endif %} Post
+</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
-  </form>
+
+    <button type="submit" id="save-btn" class="submit-button">
+        {% if object %}Update{% else %}Save{% endif %} Post
+    </button>
+</form>
+
+<script>
+const form = document.querySelector('form');
+const btn = document.getElementById('save-btn');
+{% comment %} Prevents double submission with disabled button + text change {% endcomment %}
+form.addEventListener('submit', function() {
+    btn.disabled = true;
+    btn.innerText = "{% if object %}Updating...{% else %}Saving...{% endif %}";
+});
+</script>
 {% endblock %}
