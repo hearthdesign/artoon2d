@@ -17,21 +17,8 @@
 {% endblock %}
 
 {% block content %}
-<!-- Like button -->
-<form method="post"
-      action="{% url 'like_post' post.pk %}"
-      class="likes-form"
-      id="like-post-form">
-    {% csrf_token %}
-    <button type="submit" id="like-btn">
-        {% if user in post.likes.all %}
-            ❤️ Unlike
-        {% else %}
-            🤍 Like
-        {% endif %}
-    </button>
-    <span class="like-count">{{ post.likes.count }} likes</span>
-</form>
+<!-- include Like button -->
+{% include "artoon2d_blog/components/like_button.html" %}
 
 <article class="post-detail">
     <h2>{{ post.title }}</h2>
@@ -104,16 +91,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Prevent double-like / double-unlike
-    const likeForm = document.getElementById('like-post-form');
-    if (likeForm) {
-        likeForm.addEventListener('submit', function () {
-            const btn = document.getElementById('like-btn');
-            btn.disabled = true;
-            btn.innerText = "Processing...";
-        });
-    }
 
     // Prevent double-delete
     const deleteForm = document.getElementById('delete-post-form');

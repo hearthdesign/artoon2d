@@ -1,0 +1,31 @@
+{# Like button component #}
+<form method="post"
+      action="{% url 'like_post' post.pk %}"
+      class="likes-form"
+      id="like-post-form">
+
+    {% csrf_token %}
+
+    <button type="submit" id="like-btn">
+        {% if user in post.likes.all %}
+            ❤️ Unlike
+        {% else %}
+            🤍 Like
+        {% endif %}
+    </button>
+
+    <span class="like-count">{{ post.likes.count }} likes</span>
+</form>
+{% comment %} Prevent double-like / double-unlike {% endcomment %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const likeForm = document.getElementById('like-post-form');
+    if (likeForm) {
+        likeForm.addEventListener('submit', function () {
+            const btn = document.getElementById('like-btn');
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+        });
+    }
+});
+</script>
