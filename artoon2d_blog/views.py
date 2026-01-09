@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.db.models import Q, Count, Exists, OuterRef, F
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -172,7 +173,11 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.request.user == self.get_object().author
-
+    
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        cache.clear()   # simple + safe for now
+        return response
 
 # ---------------------------------------------------------------------
 # Home
