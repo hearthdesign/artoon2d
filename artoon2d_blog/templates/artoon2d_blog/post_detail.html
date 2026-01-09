@@ -17,11 +17,13 @@
 {% endblock %}
 
 {% block content %}
-
 <!-- Like button -->
-<form method="post" action="{% url 'like_post' post.pk %}" class="likes-form">
+<form method="post"
+      action="{% url 'like_post' post.pk %}"
+      class="likes-form"
+      id="like-post-form">
     {% csrf_token %}
-    <button type="submit">
+    <button type="submit" id="like-btn">
         {% if user in post.likes.all %}
             ❤️ Unlike
         {% else %}
@@ -100,12 +102,23 @@
     <p><a href="{% url 'post_list' %}">← Back to all posts</a></p>
 </article>
 
-{# Optional JS to prevent double click on Delete button #}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Prevent double-like / double-unlike
+    const likeForm = document.getElementById('like-post-form');
+    if (likeForm) {
+        likeForm.addEventListener('submit', function () {
+            const btn = document.getElementById('like-btn');
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+        });
+    }
+
+    // Prevent double-delete
     const deleteForm = document.getElementById('delete-post-form');
     if (deleteForm) {
-        deleteForm.addEventListener('submit', function() {
+        deleteForm.addEventListener('submit', function () {
             const btn = this.querySelector('button[type="submit"]');
             btn.disabled = true;
             btn.innerText = "Deleting...";
