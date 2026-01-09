@@ -182,11 +182,12 @@ artoon2d_blog/
 --- 
 The page has been tested with the Lighthouse plugin and did not meet all the criteria. The SEO score was 100 and the accessibility score was 90, but the page is not ready for testing on "Performance" and "Best Practice".
 
-Passed the Nu HTML Checker at W3.org
-<img src="image-11.png" alt="rotate" width="600" height="300">
+Passed the Nu HTML Checker at W3.org with no error
+<img width="600" height="300" alt="Screenshot 2026-01-09 122951" src="https://github.com/user-attachments/assets/694a919b-7b0f-4bc7-8112-cb73ad252969" />
 
-<img src="image-10.png" alt="rotate" width="600" height="300">
-1 Error in CSS Validator (Not Found)
+Tested on jshint.com with no resulting error
+Tested with CSS Validator (Warnings for Use of Webkits - Font Awesome) No signnificant Error
+Pep8 Convention Issue solved with addon "Autopep" installed on vscode
 
 <img src="image-5.png" alt="Local Metrics" width="600" height="300">
 
@@ -314,6 +315,7 @@ For questions or feedback:
 ### About Page
 License
 This project is licensed under the MIT License — feel free to use and adapt it.
+
 
 
 
