@@ -1,12 +1,13 @@
 {% extends 'artoon2d_blog/base.html' %}
 {% load static %}
 {% load cloudinary %}
+
 {% block title %}{{ post.title|truncatechars:60 }}{% endblock %}
+
 {# SEO Meta Tags #}
 {% block seo %}
 <link rel="canonical" href="{{ canonical_url }}">
 <meta name="description" content="{{ post.content|truncatechars:160 }}">
-
 <meta property="og:title" content="{{ post.title }}">
 <meta property="og:description" content="{{ post.content|truncatechars:160 }}">
 <meta property="og:type" content="article">
@@ -16,6 +17,7 @@
 {% endblock %}
 
 {% block content %}
+
 <!-- Like button -->
 <form method="post" action="{% url 'like_post' post.pk %}" class="likes-form">
     {% csrf_token %}
@@ -29,18 +31,21 @@
     <span class="like-count">{{ post.likes.count }} likes</span>
 </form>
 
-<article>
+<article class="post-detail">
     <h2>{{ post.title }}</h2>
 
-    {# Show author and created date #}
-    <p><strong>By:</strong> {{ post.author }} | <strong>Published:</strong> 
-        {{ post.created_at|date:"F j, Y" }}</p>
+    {# Author and created date #}
+    <p>
+        <strong>By:</strong> {{ post.author }} |
+        <strong>Published:</strong> {{ post.created_at|date:"F j, Y" }}
+    </p>
     <p><em>{{ post.created_at|timesince }} ago</em></p>
 
     {# Follow button include #}
     {% include 'artoon2d_blog/components/follow_button.html'
-        with target_user=post.author is_following=post.author.is_following 
-        follower_count=post.author.follower_count %}
+        with target_user=post.author.profile
+        is_following=user.profile.is_following(post.author.profile)
+        follower_count=post.author.profile.follower_count %}
 
     {# Updated date if different from created date #}
     {% if post.updated_at > post.created_at %}
@@ -62,18 +67,13 @@
     {% if post.image %}
     <div>
         <a href="{{ post.get_absolute_url }}" style="display:flex; width:100%; height:100%;">
-        {% cloudinary post.image width=800 crop="scale" alt=post.title class="post-img" loading="lazy" %}
+            {% cloudinary post.image width=800 crop="scale" alt=post.title class="post-img" loading="lazy" %}
         </a>
     </div>
     {% endif %}
 
-    {# Edit link for author #}
-    {% if user == post.author %}
-        <a href="{% url 'post_update' post.pk %}">Edit Post</a>
-    {% endif %}
-
-    {# Tags if exist #}
-    {% if post.tags.exists %}
+    {# Tags if exist check #}
+    {% if post.tags.all %}
         <p><strong>Tags:</strong>
         {% for tag in post.tags.all %}
             {{ tag.name }}{% if not forloop.last %}, {% endif %}
@@ -81,8 +81,37 @@
         </p>
     {% endif %}
 
-    {# Link to go back to post list #}
+    {# Edit/Delete links only for author #}
+    {% if user == post.author %}
+        <div class="post-actions">
+            <a href="{% url 'post_update' post.pk %}" class="btn edit-btn">Edit Post</a>
+
+            <form method="post" action="{% url 'post_delete' post.pk %}" style="display:inline;" id="delete-post-form">
+                {% csrf_token %}
+                <button type="submit" class="btn delete-btn"
+                        onclick="return confirm('Are you sure you want to delete this post?');">
+                    Delete Post
+                </button>
+            </form>
+        </div>
+    {% endif %}
+
+    {# Link Back to post list #}
     <p><a href="{% url 'post_list' %}">← Back to all posts</a></p>
 </article>
+
+{# Optional JS to prevent double click on Delete button #}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const deleteForm = document.getElementById('delete-post-form');
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function() {
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerText = "Deleting...";
+        });
+    }
+});
+</script>
 
 {% endblock %}
