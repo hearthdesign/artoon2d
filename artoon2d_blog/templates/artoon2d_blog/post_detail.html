@@ -1,4 +1,5 @@
 {% extends 'artoon2d_blog/base.html' %}
+{% load static %}
 {% load cloudinary %}
 {% block title %}{{ post.title|truncatechars:60 }}{% endblock %}
 {# SEO Meta Tags #}
@@ -60,7 +61,7 @@
     {# Post image #}
     {% if post.image %}
     <div>
-        {% cloudinary post.image width=600 crop="scale" 
+        {% cloudinary post.image width=800 crop="scale" 
         alt=post.title class="post-img" loading="lazy" %}
     {% else %}
         <img src="{% static 'default-image.jpg' %}" alt="No image" class="post-img">
