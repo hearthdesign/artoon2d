@@ -1,82 +1,96 @@
-const track = document.querySelector('.carousel-track');
-const slides = Array.from(track.children);
-const nextBtn = document.querySelector('.carousel-btn.next');
-const prevBtn = document.querySelector('.carousel-btn.prev');
+document.addEventListener("DOMContentLoaded", () => {
 
-let currentIndex = 0;
+  /* =========================
+     CAROUSEL (SAFE)
+  ========================= */
 
-function updateCarousel() {
-  const slideWidth = slides[0].getBoundingClientRect().width;
-  track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
-}
+  const track = document.querySelector('.carousel-track');
+  const nextBtn = document.querySelector('.carousel-btn.next');
+  const prevBtn = document.querySelector('.carousel-btn.prev');
 
-nextBtn.addEventListener('click', () => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateCarousel();
-});
+  if (track && nextBtn && prevBtn) {
+    const slides = Array.from(track.children);
+    let currentIndex = 0;
 
-prevBtn.addEventListener('click', () => {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  updateCarousel();
-});
-
-// Optional: Auto-play
-setInterval(() => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateCarousel();
-}, 5000);
-
-
-  // Show button when user scrolls down
-  window.onscroll = function() {
-    const btn = document.getElementById("scrollTopBtn");
-    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-      btn.style.display = "block";
-    } else {
-      btn.style.display = "none";
+    function updateCarousel() {
+      if (!slides.length) return;
+      const slideWidth = slides[0].getBoundingClientRect().width;
+      track.style.transform = `translateX(-${slideWidth * currentIndex}px)`;
     }
-  };
 
-  // Scroll to top when clicked
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateCarousel();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      updateCarousel();
+    });
+
+    // Optional auto-play
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateCarousel();
+    }, 5000);
   }
 
 
+  /* =========================
+     SCROLL TO TOP BUTTON (SAFE)
+  ========================= */
+
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+  if (scrollTopBtn) {
+    window.addEventListener("scroll", () => {
+      if (document.documentElement.scrollTop > 300) {
+        scrollTopBtn.style.display = "block";
+      } else {
+        scrollTopBtn.style.display = "none";
+      }
+    });
+
+    scrollTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+});
+
+
+/* =========================
+   SHARE FUNCTIONS (SAFE)
+   These are fine as-is
+========================= */
 
 function MastodonShare(event) {
   const button = event.currentTarget;
-  // Get the share text from the button's data-src attribute
   const shareText = button.getAttribute("data-src") || "Check this out!";
-  // Default Mastodon instance
   const domain = "mastodon.social";
-  // Construct the share URL
-  const shareURL = `https://${domain}/share?text=${encodeURIComponent(shareText)}`;
-  // Open the share page in a new tab
-  window.open(shareURL, '_blank');
+  window.open(
+    `https://${domain}/share?text=${encodeURIComponent(shareText)}`,
+    "_blank"
+  );
 }
 
 function PixelfeldShare(event) {
   const button = event.currentTarget;
-  // Get the share text from the button's data-src attribute
   const shareText = button.getAttribute("data-src") || "Check this out!";
-  // Default Pixelfeld instance
   const domain = "pixelfeld.social";
-  // Construct the share URL
-  const shareURL = `https://${domain}/share?text=${encodeURIComponent(shareText)}`;
-  // Open the share page in a new tab
-  window.open(shareURL, '_blank');
+  window.open(
+    `https://${domain}/share?text=${encodeURIComponent(shareText)}`,
+    "_blank"
+  );
 }
 
 function FriendicaShare(event) {
   const button = event.currentTarget;
-  // Get the title and URL from the button's data attributes
   const shareTitle = button.getAttribute("data-title") || "Check this out!";
   const shareURL = button.getAttribute("data-url") || window.location.href;
-  // Default Friendica instance
   const domain = "friendica.eu";
-  // Construct the share URL
-  const fullShareURL = `https://${domain}/share?title=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareURL)}`;
-  // Open the share page in a new tab
-  window.open(fullShareURL, '_blank');
+  window.open(
+    `https://${domain}/share?title=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareURL)}`,
+    "_blank"
+  );
 }

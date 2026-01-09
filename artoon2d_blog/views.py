@@ -174,9 +174,10 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         return self.request.user == self.get_object().author
     
+    # Clear cache after post deletion
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        cache.clear()   # simple + safe for now
+        cache.clear()   
         return response
 
 # ---------------------------------------------------------------------
